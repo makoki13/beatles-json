@@ -36,3 +36,56 @@
     transform: rotate(360deg);
   }
 }
+
+/* src/App.css */
+.App {
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-superior {
+  background-color: #282c34; /* Color de fondo del menú */
+  padding: 10px 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.menu-superior ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: flex-start; /* Alinea los elementos del menú a la izquierda */
+  gap: 15px; /* Espacio entre elementos del menú */
+}
+
+.menu-superior li {
+  margin: 0;
+}
+
+.menu-superior a {
+  color: white;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.menu-superior a:hover {
+  background-color: #0861f0; /* Color de fondo al pasar el mouse */
+}
+
+.menu-superior a.active {
+  background-color: #61dafb; /* Color de fondo para el enlace activo */
+  color: #282c34;
+}
+
+.contenido-principal {
+  flex: 1; /* Hace que el contenido principal ocupe el espacio restante */
+  padding: 20px;
+  margin-top: 10px; /* Espacio entre el menú y el contenido */
+  text-align: left; /* Alinea el texto del contenido a la izquierda */
+}
