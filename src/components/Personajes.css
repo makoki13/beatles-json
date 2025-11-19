@@ -1,0 +1,96 @@
+/* src/components/Personajes.css */
+.personajes-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.personaje-form {
+  background-color: #f9f9f9;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.personaje-form h3 {
+  margin-top: 0;
+}
+
+.personaje-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.personaje-form input {
+  width: calc(100% - 16px); /* Ajuste para el padding del label */
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+.personaje-form button {
+  margin-right: 10px;
+  margin-top: 10px;
+  padding: 8px 15px;
+}
+
+.nuevo-btn {
+  margin-bottom: 20px;
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.nuevo-btn:hover {
+  background-color: #45a049;
+}
+
+.eliminar-btn {
+  background-color: #f44336 !important; /* !important para sobrescribir estilos generales de botón si los hay */
+  color: white;
+}
+
+.eliminar-btn:hover {
+  background-color: #da190b !important;
+}
+
+.tabla-personajes table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.tabla-personajes th,
+.tabla-personajes td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.tabla-personajes th {
+  background-color: #f2f2f2;
+}
+
+.tabla-personajes button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  font-size: 0.9em;
+}
+
+.error-message {
+  color: red;
+  background-color: #ffe6e6;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.loading {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 10px;
+}
