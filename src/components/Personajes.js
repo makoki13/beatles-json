@@ -308,8 +308,7 @@ const manejarSubmit = useCallback(async (e) => {
 
   // VistaListar: No depende de estados del formulario, memorizarla puede ser útil si cambia mucho vistaActual
   const VistaListar = useMemo(() => (
-    <div className="vista-listar">
-      <h3>People List</h3>
+    <div className="vista-listar">      
       {mensajeError && vistaActual === 'listar' && <div className="error-message">{mensajeError}</div>}
       {cargando && vistaActual === 'listar' && <div className="loading">Loading...</div>}
       {!cargando && vistaActual === 'listar' && personajes.length === 0 ? (

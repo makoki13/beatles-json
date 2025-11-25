@@ -1,0 +1,165 @@
+/* src/components/Personajes.css */
+.sesiones-container {
+  padding: 20px;
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex; /* Usamos flexbox para el layout */
+  flex-direction: column; /* Por defecto, apilamos elementos verticalmente */
+  min-height: 80vh; /* Ajusta la altura mínima */
+}
+
+/* --- Menú Lateral --- */
+.menu-lateral {
+  width: 100px; /* Ancho fijo para el menú */
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 5px;
+  margin-right: 20px; /* Espacio entre menú y contenido */
+  align-self: flex-start; /* Alinea el menú arriba */
+  height: fit-content; /* Altura ajustada al contenido */
+}
+
+.menu-lateral ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-lateral li {
+  margin-bottom: 10px;
+}
+
+.menu-lateral button {
+  width: 100%; /* Botones llenan el ancho del menú */
+  padding: 10px;
+  background-color: #ddd;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 4px;
+  font-size: 24px;
+}
+
+.menu-lateral button:hover {
+  background-color: #ccc;
+}
+
+.menu-lateral button.active {
+  background-color: #61dafb;
+  color: #282c34;
+}
+
+/* --- Contenido Principal --- */
+.contenido-principal {
+  flex: 1; /* El contenido principal ocupa el espacio restante */
+  padding: 15px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  min-height: 300px; /* Altura mínima para el contenido */
+}
+
+/* --- Estilos comunes para vistas --- */
+.vista-listar,
+.vista-buscar,
+.vista-nuevo {
+  /* Puedes añadir estilos específicos para cada vista aquí si es necesario */
+}
+
+/* --- Estilos del formulario --- */
+.sesion-form {
+  /* background-color: #f9f9f9; Removido, ahora está en .contenido-principal */
+  padding: 15px;
+  /* margin-bottom: 20px; */
+  /* border-radius: 5px; */
+  /* border: 1px solid #ddd; */
+}
+
+.sesion-form h3 {
+  margin-top: 0;
+}
+
+.sesion-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.sesion-form input {
+  width: calc(100% - 16px);
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+.sesion-form button {
+  margin-right: 10px;
+  margin-top: 10px;
+  padding: 8px 15px;
+}
+
+/* --- Estilos de la tabla --- */
+.tabla-sesiones {
+  width: 100%;
+  overflow-x: auto; /* Para manejar tablas anchas en pantallas pequeñas */
+}
+
+.tabla-sesiones table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.tabla-sesiones th,
+.tabla-sesiones td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.tabla-sesiones th {
+  background-color: #f2f2f2;
+}
+
+.tabla-sesiones button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  font-size: 0.9em;
+}
+
+/* --- Botones de acción en la tabla --- */
+.eliminar-btn {
+  background-color: #f44336 !important;
+  color: white;
+}
+
+.eliminar-btn:hover {
+  background-color: #da190b !important;
+}
+
+/* --- Mensajes --- */
+.error-message {
+  color: red;
+  background-color: #ffe6e6;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.loading {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+/* --- Diseño Responsivo (opcional) --- */
+@media (min-width: 768px) {
+  .sesiones-container {
+    flex-direction: row; /* Cambia a fila en pantallas medianas/grandes */
+  }
+  .contenido-principal {
+    margin-left: 20px; /* Espacio a la izquierda en layout horizontal */
+  }
+  .menu-lateral {
+    margin-right: 0; /* Elimina margen derecho cuando está alineado horizontalmente */
+  }
+}

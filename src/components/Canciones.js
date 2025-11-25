@@ -24,43 +24,40 @@ const Canciones = () => {
   const [mensajeError, setMensajeError] = useState('');
 
   // --- Componente Reutilizable TablaCanciones ---
-  const TablaCanciones = useCallback(({ canciones, onEditar, onEliminar, cargando, titulo = "Canciones" }) => {
+  const TablaCanciones = useCallback(({ canciones, onEditar, onEliminar, cargando }) => {
     return (
-      <div className="tabla-canciones">
-        <h3>{titulo}</h3>
+      <div className="tabla-canciones">        
         {canciones.length === 0 ? (
-          <p>No hay datos para mostrar.</p>
+          <p>There's no data to show.</p>
         ) : (
           <table>
             <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Nombres Alternativos</th>
-                <th>¿Tiene Grabación?</th>
-                <th>Acciones</th>
+              <tr>                
+                <th>Title</th>
+                <th>Alt. Title</th>
+                <th>Was recorded?</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {canciones.map((cancion) => (
-                <tr key={cancion.id}>
-                  <td>{cancion.id}</td>
-                  <td>{cancion.nombre}</td>
-                  <td>{cancion.nombres_alternativos && cancion.nombres_alternativos.length > 0 ? canciones.nombres_alternativos.join(', ') : '-'}</td> {/* Muestra los nombres alternativos unidos por coma, o '-' si no hay */}
-                  <td>{cancion.hay_grabacion ? 'Sí' : 'No'}</td>
+                <tr key={cancion.id}>                  
+                  <td style={{textAlign:"left"}}>{cancion.nombre}</td>
+                  <td style={{textAlign:"left"}}>{cancion.nombres_alternativos && cancion.nombres_alternativos.length > 0 ? canciones.nombres_alternativos.join(', ') : '-'}</td> {/* Muestra los nombres alternativos unidos por coma, o '-' si no hay */}
+                  <td>{cancion.hay_grabacion ? 'Yes' : 'No'}</td>
                   <td>
                     <button
                       onClick={() => onEditar(cancion)}
                       disabled={cargando}
                     >
-                      Editar
+                      Edit
                     </button>
                     <button
                       onClick={() => onEliminar(cancion.id)}
                       disabled={cargando}
                       className="eliminar-btn"
                     >
-                      Borrar
+                      Delete
                     </button>
                   </td>
                 </tr>
@@ -205,7 +202,7 @@ const Canciones = () => {
   }, []);
 
   const eliminarCancion = useCallback(async (id) => {
-    if (!window.confirm('¿Estás seguro de que deseas eliminar esta canción?')) {
+    if (!window.confirm('Are you sure to delete this song?')) {
       return;
     }
 
@@ -277,7 +274,6 @@ const Canciones = () => {
 
   const VistaListar = useMemo(() => (
     <div className="vista-listar">
-      <h3>Lista de Canciones</h3>
       {mensajeError && vistaActual === 'listar' && <div className="error-message">{mensajeError}</div>}
       {cargando && vistaActual === 'listar' && <div className="loading">Cargando...</div>}
       {!cargando && vistaActual === 'listar' && canciones.length === 0 ? (
@@ -295,11 +291,10 @@ const Canciones = () => {
 
 
   const VistaBuscar = useMemo(() => (
-    <div className="vista-buscar">
-      <h3>Formulario de Búsqueda</h3>
+    <div className="vista-buscar">      
       <form onSubmit={(e) => { e.preventDefault(); ejecutarBusqueda(); }} className="busqueda-form">
         <label>
-          Nombre:
+          Title:
           <input
             type="text"
             name="nombre"
@@ -308,8 +303,8 @@ const Canciones = () => {
           />
         </label>
         {/* Puedes añadir más campos de búsqueda aquí */}
-        <button type="submit" disabled={cargando}>Buscar</button>
-        <button type="button" onClick={limpiarBusqueda} disabled={cargando}>Limpiar</button>
+        <button type="submit" disabled={cargando}>Search</button>
+        <button type="button" onClick={limpiarBusqueda} disabled={cargando}>Reset</button>
       </form>
 
       {mensajeError && vistaActual === 'buscar' && <div className="error-message">{mensajeError}</div>}
@@ -325,23 +320,22 @@ const Canciones = () => {
         />
       )}
       {!cargando && vistaActual === 'buscar' && resultadosBusqueda.length === 0 && busquedaForm.nombre && (
-        <p>No se encontraron canciones que coincidan con la búsqueda.</p>
+        <p>Not found any song.</p>
       )}
       {!cargando && vistaActual === 'buscar' && resultadosBusqueda.length === 0 && !busquedaForm.nombre && (
-        <p>Introduzca términos de búsqueda y pulse "Buscar".</p>
+        <p>Fill the form and press "Search".</p>
       )}
     </div>
   ), [busquedaForm, ejecutarBusqueda, limpiarBusqueda, mensajeError, cargando, vistaActual, resultadosBusqueda, cargarParaEditar, eliminarCancion, manejarCambioBusqueda]);
 
 
   const VistaNuevo = useMemo(() => (
-    <div className="vista-nuevo">
-      <h3>{esEdicion ? 'Editar Canción' : 'Nueva Canción'}</h3>
+    <div className="vista-nuevo">      
       {mensajeError && vistaActual === 'nuevo' && <div className="error-message">{mensajeError}</div>}
       <form onSubmit={manejarSubmit} className="cancion-form">
         {esEdicion && <input type="hidden" name="id" value={cancionForm.id} />}
         <label>
-          Nombre:
+          Title:
           <input
             type="text"
             name="nombre"
@@ -351,7 +345,7 @@ const Canciones = () => {
           />
         </label>
         <label>
-          Nombres Alternativos (separados por coma):
+          Alt Titles (separated with comma):
           <input
             type="text"
             name="nombres_alternativos"
@@ -359,24 +353,25 @@ const Canciones = () => {
             onChange={manejarCambioNombresAlternativos} // Usa la función específica
           />
         </label>
-        <label>
-          ¿Tiene Grabación?:
+        <label style={{display:"flex"}}>
+          Was recorded?:
           <input
             type="checkbox"
             name="hay_grabacion"
+            class="hay_grabacion"
             checked={cancionForm.hay_grabacion}
             onChange={manejarCambio} // Usa la función general, maneja checkbox
           />
-        </label>
+          </label>
         <button type="submit" disabled={cargando}>
-          {esEdicion ? 'Actualizar' : 'Crear'}
+          {esEdicion ? 'Update' : 'New'}
         </button>
         <button
           type="button"
           onClick={() => setVistaActual('listar')}
           disabled={cargando}
         >
-          Cancelar
+          Cancel
         </button>
       </form>
     </div>
@@ -393,9 +388,7 @@ const Canciones = () => {
 
   // --- Renderizado ---
   return (
-    <div className="canciones-container">
-      <h2>Gestión de Canciones</h2>
-
+    <div className="canciones-container">      
       <nav className="menu-lateral">
         <ul>
           <li>
@@ -403,7 +396,7 @@ const Canciones = () => {
               className={vistaActual === 'listar' ? 'active' : ''}
               onClick={() => setVistaActual('listar')}
             >
-              Listar
+              List
             </button>
           </li>
           <li>
@@ -411,7 +404,7 @@ const Canciones = () => {
               className={vistaActual === 'buscar' ? 'active' : ''}
               onClick={() => setVistaActual('buscar')}
             >
-              Buscar
+              Search
             </button>
           </li>
           <li>
@@ -419,7 +412,7 @@ const Canciones = () => {
               className={vistaActual === 'nuevo' ? 'active' : ''}
               onClick={iniciarCreacion}
             >
-              Nuevo
+              New
             </button>
           </li>
         </ul>

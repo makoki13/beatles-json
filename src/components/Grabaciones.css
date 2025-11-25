@@ -1,6 +1,6 @@
 /* src/components/Canciones.css */
 /* Copia el contenido de Personajes.css o ajusta según sea necesario */
-.canciones-container {
+.grabaciones-container {
   padding: 20px;
   max-width: 100%;
   margin: 0 auto;
@@ -60,63 +60,56 @@
 }
 
 /* Estilos del formulario (pueden ser compartidos o ajustados) */
-.cancion-form { /* Cambiado el nombre de la clase */
+.grabacion-form { /* Cambiado el nombre de la clase */
   padding: 15px;
 }
 
-.cancion-form h3 {
+.grabacion-form h3 {
   margin-top: 0;
 }
 
-.cancion-form label {
+.grabacion-form label {
   display: block;
   margin-bottom: 10px;
 }
 
-.cancion-form input[type="text"] {
+.grabacion-form input[type="text"] {
   width: calc(100% - 16px); 
   padding: 8px;
   margin-top: 5px;
   box-sizing: border-box;
 }
 
-.hay_grabacion {    
-  padding: 8px;
-  margin-top: 5px;
-  box-sizing: border-box;
-  font-size: 40px;
-}
-
-.cancion-form button {
+.grabacion-form button {
   margin-right: 10px;
   margin-top: 10px;
   padding: 8px 15px;
 }
 
 /* Estilos de la tabla (pueden ser compartidos o ajustados) */
-.tabla-canciones { /* Cambiado el nombre de la clase */
+.vista-listar { /* Cambiado el nombre de la clase */
   width: 100%;
   overflow-x: auto;
 }
 
-.tabla-canciones table { /* Cambiado el nombre de la clase */
+.vista-listar table { /* Cambiado el nombre de la clase */
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
 }
 
-.tabla-canciones th, /* Cambiado el nombre de la clase */
-.tabla-canciones td { /* Cambiado el nombre de la clase */
+.vista-listar th, /* Cambiado el nombre de la clase */
+.vista-listar td { /* Cambiado el nombre de la clase */
   border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
 }
 
-.tabla-canciones th { /* Cambiado el nombre de la clase */
+.vista-listar th { /* Cambiado el nombre de la clase */
   background-color: #f2f2f2;
 }
 
-.tabla-canciones button { /* Cambiado el nombre de la clase */
+.vista-listar button { /* Cambiado el nombre de la clase */
   margin-right: 5px;
   padding: 5px 10px;
   font-size: 0.9em;
@@ -147,9 +140,45 @@
   margin-bottom: 10px;
 }
 
-/* Diseño Responsivo (puede ser compartido) */
+/* src/components/Grabaciones.css */
+.grabaciones-container {
+  padding: 20px;
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex; /* Usamos flexbox para el layout */
+  flex-direction: row; /* <-- Cambia esto de 'column' a 'row' aquí mismo */
+  min-height: 80vh;
+  /* Asegúrate de que el menú tenga un ancho fijo y el contenido principal ocupe el resto */
+}
+
+/* Estilos del menú lateral */
+.menu-lateral {
+  width: 200px; /* Ancho fijo para el menú */
+  background-color: #f4f4f4;
+  padding: 15px;
+  border-radius: 5px;
+  /* margin-right: 20px; <-- Puedes mover este margen al contenido principal */
+  align-self: flex-start; /* Alinea el menú arriba */
+  height: fit-content; /* Altura ajustada al contenido */
+}
+
+/* Estilos del contenido principal */
+.contenido-principal {
+  flex: 1; /* El contenido principal ocupa el espacio restante */
+  padding: 15px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  min-height: 300px;
+  margin-left: 20px; /* Espacio entre menú y contenido */
+}
+
+/* ... (resto de los estilos, pero sin el bloque @media) ... */
+
+/* Elimina esta sección completa */
+/*
 @media (min-width: 768px) {
-  .canciones-container { /* Cambiado el nombre de la clase */
+  .grabaciones-container { // O .personajes-container, etc.
     flex-direction: row;
   }
   .contenido-principal {
@@ -159,3 +188,4 @@
     margin-right: 0;
   }
 }
+*/
