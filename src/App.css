@@ -65,6 +65,18 @@
   margin: 0;
 }
 
+.menu-listados a {
+  color:gold
+}
+
+.bienvenida {
+  color:darkgoldenrod;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 84px;
+  font-style: italic;
+  text-align: center;
+}
+
 .menu-superior a {
   color: white;
   text-decoration: none;
@@ -72,10 +84,6 @@
   border-radius: 4px;
   transition: background-color 0.3s ease;
   text-align: center;
-}
-
-.menu-listados a {
-  color:gold
 }
 
 .menu-superior a:hover {
@@ -90,6 +98,6 @@
 .contenido-principal {
   flex: 1; /* Hace que el contenido principal ocupe el espacio restante */
   padding: 20px;
-  margin-top: 10px; /* Espacio entre el menú y el contenido */
+  margin-top: 1px; /* Espacio entre el menú y el contenido */
   text-align: left; /* Alinea el texto del contenido a la izquierda */
 }

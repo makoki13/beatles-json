@@ -71,7 +71,7 @@ function App() {
         <main className="contenido-principal">
           <Routes>
             {/* Ruta para la página principal (opcional) */}
-            <Route path="/" element={<div>Bienvenido a la aplicación Beatles Json</div>} />
+            <Route path="/" element={<div class="bienvenida">Welcome to Beatles' Json</div>} />
 
             {/* Rutas para cada pantalla de gestión */}
             <Route path="/personajes" element={<Personajes />} />

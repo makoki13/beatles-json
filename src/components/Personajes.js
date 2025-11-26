@@ -46,33 +46,30 @@ const Personajes = () => {
   // ... (otros imports e inicialización de estado)
   const TablaPersonajes = useCallback(({ personajes, onEditar, onEliminar, cargando, titulo = "Personajes" }) => {
     return (
-      <div className="tabla-personajes">
-        <h3>{titulo}</h3>
+      <div className="tabla-personajes">        
         {personajes.length === 0 ? (
           <p>There's no data to show.</p>
         ) : (
           <table>
             <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Fecha Nacimiento</th>
-                <th>Lugar Nacimiento</th>
-                <th>Fecha Fallecimiento</th>
-                <th>Lugar Fallecimiento</th>
-                <th>Acciones</th>
+              <tr>                
+                <th>Name</th>                
+                <th>Born date</th>
+                <th>Born place</th>
+                <th>Pass date</th>
+                <th>Pass place</th>
+                <th className='celda-20px'>Actions</th>
               </tr>
             </thead>
             <tbody>
               {personajes.map((personaje) => (
-                <tr key={personaje.id}>
-                  <td>{personaje.id}</td>
+                <tr key={personaje.id}>                  
                   <td>{personaje.nombre}</td>
                   <td>{personaje.fecha_nacimiento || '-'}</td>
                   <td>{personaje.lugar_nacimiento || '-'}</td>
                   <td>{personaje.fecha_fallecimiento || '-'}</td>
                   <td>{personaje.lugar_fallecimiento || '-'}</td>
-                  <td>
+                  <td className='celda-20px'>
                     <button
                       onClick={() => onEditar(personaje)}
                       disabled={cargando}
@@ -359,8 +356,7 @@ const manejarSubmit = useCallback(async (e) => {
 
   // VistaBuscar: Por ahora es simple, pero puedes memorizarla también si crece
   const VistaBuscar = useMemo(() => (
-    <div className="vista-buscar">
-      <h3>Search form</h3>
+    <div className="vista-buscar">      
       <form onSubmit={(e) => { e.preventDefault(); ejecutarBusqueda(); }} className="busqueda-form">
         <label>
           Name:
