@@ -45,26 +45,23 @@ const Grabaciones = () => {
   const TablaGrabaciones = useCallback(({ grabaciones, onEditar, onEliminar, cargando, titulo = "Grabaciones" }) => {
     return (
       <div className="tabla-grabaciones">
-        <h3>{titulo}</h3>
         {grabaciones.length === 0 ? (
-          <p>No hay datos para mostrar.</p>
+          <p>No records to show.</p>
         ) : (
           <table>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Descripción</th>
-                <th>Canción</th>
-                <th>Tipo</th>
-                <th>Fecha</th>
-                <th>Sesión</th>
-                <th>Acciones</th>
+                <th>Description</th>
+                <th>Song</th>
+                <th>Kind</th>
+                <th>Date</th>
+                <th>Session</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {grabaciones.map((grabacion) => (
                 <tr key={grabacion.id}>
-                  <td>{grabacion.id}</td>
                   <td>{grabacion.descripcion || '-'}</td>
                   <td>{grabacion.cancion ? grabacion.cancion.nombre : '-'}</td> {/* Muestra el nombre de la canción */}
                   <td>{grabacion.tipo}</td>
@@ -75,14 +72,14 @@ const Grabaciones = () => {
                       onClick={() => onEditar(grabacion)}
                       disabled={cargando}
                     >
-                      Editar
+                      Edit
                     </button>
                     <button
                       onClick={() => onEliminar(grabacion.id)}
                       disabled={cargando}
                       className="eliminar-btn"
                     >
-                      Borrar
+                      Delete
                     </button>
                   </td>
                 </tr>
@@ -384,11 +381,10 @@ if (esEdicion) {
 
   const VistaListar = useMemo(() => (
     <div className="vista-listar">
-      <h3>Lista de Grabaciones</h3>
       {mensajeError && vistaActual === 'listar' && <div className="error-message">{mensajeError}</div>}
       {cargando && vistaActual === 'listar' && <div className="loading">Cargando...</div>}
       {!cargando && vistaActual === 'listar' && grabaciones.length === 0 ? (
-        <p>No hay grabaciones registradas.</p>
+        <p>There's no records</p>
       ) : vistaActual === 'listar' ? (
         <TablaGrabaciones
           grabaciones={grabaciones}
@@ -403,10 +399,9 @@ if (esEdicion) {
 
   const VistaBuscar = useMemo(() => (
     <div className="vista-buscar">
-      <h3>Formulario de Búsqueda</h3>
       <form onSubmit={(e) => { e.preventDefault(); ejecutarBusqueda(); }} className="busqueda-form">
         <label>
-          Descripción:
+          Description:
           <input
             type="text"
             name="descripcion"
@@ -415,8 +410,8 @@ if (esEdicion) {
           />
         </label>
         {/* Puedes añadir más campos de búsqueda aquí */}
-        <button type="submit" disabled={cargando}>Buscar</button>
-        <button type="button" onClick={limpiarBusqueda} disabled={cargando}>Limpiar</button>
+        <button type="submit" disabled={cargando}>Search</button>
+        <button type="button" onClick={limpiarBusqueda} disabled={cargando}>Reset</button>
       </form>
 
       {mensajeError && vistaActual === 'buscar' && <div className="error-message">{mensajeError}</div>}
@@ -432,10 +427,10 @@ if (esEdicion) {
         />
       )}
       {!cargando && vistaActual === 'buscar' && resultadosBusqueda.length === 0 && busquedaForm.descripcion && (
-        <p>No se encontraron grabaciones que coincidan con la búsqueda.</p>
+        <p>Not found any record.</p>
       )}
       {!cargando && vistaActual === 'buscar' && resultadosBusqueda.length === 0 && !busquedaForm.descripcion && (
-        <p>Introduzca términos de búsqueda y pulse "Buscar".</p>
+        <p>Fill the form and press "Search".</p>
       )}
     </div>
   ), [busquedaForm, ejecutarBusqueda, limpiarBusqueda, manejarCambioBusqueda, mensajeError, cargando, vistaActual, resultadosBusqueda, cargarParaEditar, eliminarGrabacion]);
@@ -443,12 +438,12 @@ if (esEdicion) {
 
   const VistaNuevo = useMemo(() => (
     <div className="vista-nuevo">
-      <h3>{esEdicion ? 'Editar Grabación' : 'Nueva Grabación'}</h3>
+      <h3>{esEdicion ? 'Edit Recording' : 'New Recording'}</h3>
       {mensajeError && vistaActual === 'nuevo' && <div className="error-message">{mensajeError}</div>}
       <form onSubmit={manejarSubmit} className="grabacion-form">
         {esEdicion && <input type="hidden" name="id" value={grabacionForm.id} />}
         <label>
-          Descripción:
+          Description:
           <input
             type="text"
             name="descripcion"
@@ -457,105 +452,60 @@ if (esEdicion) {
           />
         </label>
         <label>
-          Canción:
+          Song:
           <select
             name="cancion_id"
             value={grabacionForm.cancion_id}
             onChange={manejarCambio}
           >
-            <option value="">-- Seleccione una canción --</option>
+            <option value="">-- Select a song --</option>
             {canciones.map(cancion => (
               <option key={cancion.id} value={cancion.id}>{cancion.nombre}</option>
             ))}
           </select>
         </label>
+        
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <label>
+            Time (MM:SS or seconds):
+            <input
+              type="text"
+              name="duracion"
+              value={grabacionForm.duracion}
+              onChange={manejarCambio}
+              style={{ width: "100px", textAlign: "center" }}
+            />
+          </label>
+          <label>
+            Date:
+            <input
+              type="date"
+              name="fecha"
+              value={grabacionForm.fecha}
+              onChange={manejarCambio}
+            />
+          </label>
+        </div>
         <label>
-          Tipo:
+          Kind:
           <select
             name="tipo"
             value={grabacionForm.tipo}
-            onChange={manejarCambio} // Al cambiar el tipo, podría limpiar los campos específicos
+            onChange={manejarCambio}
           >
             <option value="Demo">Demo</option>
             <option value="Toma">Toma</option>
-            <option value="Actuación">Actuación</option>
-            <option value="Entrevista">Entrevista</option>
-          </select>
-        </label>
-        <label>
-          Duración (HH:MM:SS o segundos):
-          <input
-            type="text"
-            name="duracion"
-            value={grabacionForm.duracion}
-            onChange={manejarCambio}
-          />
-        </label>
-        <label>
-          Fecha:
-          <input
-            type="date"
-            name="fecha"
-            value={grabacionForm.fecha}
-            onChange={manejarCambio}
-          />
-        </label>
-        <label>
-          Lugar:
-          <input
-            type="text"
-            name="lugar"
-            value={grabacionForm.lugar}
-            onChange={manejarCambio}
-          />
-        </label>
-        <label>
-          Publicación:
-          <select
-            name="publicacion"
-            value={grabacionForm.publicacion}
-            onChange={manejarCambio}
-          >
-            <option value="">-- Seleccione estado --</option>
-            <option value="Existe_Sin_Publicar">Existe Sin Publicar</option>
-            <option value="Publico">Publico</option>
-            <option value="Oficial">Oficial</option>
-          </select>
-        </label>
-        <label>
-          Soporte:
-          <select
-            name="soporte"
-            value={grabacionForm.soporte}
-            onChange={manejarCambio}
-          >
-            <option value="">-- Seleccione estado --</option>
-            <option value="No_existe">No existe</option>
-            <option value="Existe_Sin_Publicar">Existe Sin Publicar</option>
-            <option value="Publico">Publico</option>
-            <option value="Oficial">Oficial</option>
-          </select>
-        </label>
-        <label>
-          Sesión:
-          <select
-            name="sesion_id"
-            value={grabacionForm.sesion_id}
-            onChange={manejarCambio}
-          >
-            <option value="">-- Seleccione una sesión --</option>
-            {sesiones.map(sesion => (
-              <option key={sesion.id} value={sesion.id}>{sesion.descripcion}</option>
-            ))}
+            <option value="Actuación">Performance</option>
+            <option value="Entrevista">Interview</option>
           </select>
         </label>
 
         {/* Campos específicos según el tipo */}
         {grabacionForm.tipo === 'Demo' && (
           <div className="campos-especificos">
-            <h4>Detalles de Demo</h4>
+            <h4>Demo details</h4>
             <label>
-              ¿Es una demo de estudio?
+              ¿Is a studio demo?
               <input
                 type="checkbox"
                 name="estudio"
@@ -568,21 +518,21 @@ if (esEdicion) {
 
         {grabacionForm.tipo === 'Toma' && (
           <div className="campos-especificos">
-            <h4>Detalles de Toma</h4>
+            <h4>Take details</h4>
             <label>
-              Tipo de Estudio:
+              Kind of take:
               <select
                 name="tipo_estudio"
                 value={grabacionForm.tipo_estudio}
                 onChange={manejarCambio}
               >
-                <option value="Toma">Toma</option>
+                <option value="Toma">Take</option>
                 <option value="Overdub">Overdub</option>
-                <option value="Toma+Overdub">Toma+Overdub</option>
+                <option value="Toma+Overdub">Take+Overdub</option>
               </select>
             </label>
             <label>
-              Número de Toma (Ordinal):
+              Take number (Ordinal):
               <input
                 type="number"
                 name="ordinal"
@@ -596,21 +546,21 @@ if (esEdicion) {
 
         {grabacionForm.tipo === 'Actuación' && (
           <div className="campos-especificos">
-            <h4>Detalles de Actuación</h4>
+            <h4>Performance details</h4>
             <label>
-              Tipo de Actuación:
+              Kind of performance:
               <select
                 name="tipo_actuacion"
                 value={grabacionForm.tipo_actuacion}
                 onChange={manejarCambio}
               >
                 <option value="Radio">Radio</option>
-                <option value="Concierto">Concierto</option>
+                <option value="Concierto">Concert</option>
                 <option value="TV">TV</option>
               </select>
             </label>
             <label>
-              Número de Actuación (Ordinal):
+              Number of performance (Ordinal):
               <input
                 type="number"
                 name="ordinal_actuacion"
@@ -623,15 +573,65 @@ if (esEdicion) {
           </div>
         )}
 
+        <label>
+          Place:
+          <input
+            type="text"
+            name="lugar"
+            value={grabacionForm.lugar}
+            onChange={manejarCambio}
+          />
+        </label>
+        <label>
+          Publish:
+          <select
+            name="publicacion"
+            value={grabacionForm.publicacion}
+            onChange={manejarCambio}
+          >
+            <option value="">-- Search status --</option>
+            <option value="Existe_Sin_Publicar">Not published</option>
+            <option value="Publico">Public</option>
+            <option value="Oficial">Official</option>
+          </select>
+        </label>
+        <label>
+          Media:
+          <select
+            name="soporte"
+            value={grabacionForm.soporte}
+            onChange={manejarCambio}
+          >
+            <option value="">-- Select state media --</option>
+            <option value="No_existe">Not exists</option>
+            <option value="Existe_Sin_Publicar">Exists, but not published</option>
+            <option value="Publico">Public</option>
+            <option value="Oficial">Official</option>
+          </select>
+        </label>
+        <label>
+          Session:
+          <select
+            name="sesion_id"
+            value={grabacionForm.sesion_id}
+            onChange={manejarCambio}
+          >
+            <option value="">-- Select session --</option>
+            {sesiones.map(sesion => (
+              <option key={sesion.id} value={sesion.id}>{sesion.descripcion}</option>
+            ))}
+          </select>
+        </label>
+
         <button type="submit" disabled={cargando}>
-          {esEdicion ? 'Actualizar' : 'Crear'}
+          {esEdicion ? 'Update' : 'New'}
         </button>
         <button
           type="button"
           onClick={() => setVistaActual('listar')}
           disabled={cargando}
         >
-          Cancelar
+          Cancel
         </button>
       </form>
     </div>
@@ -656,7 +656,7 @@ if (esEdicion) {
               className={vistaActual === 'listar' ? 'active' : ''}
               onClick={() => setVistaActual('listar')}
             >
-              Listar
+              List
             </button>
           </li>
           <li>
@@ -664,7 +664,7 @@ if (esEdicion) {
               className={vistaActual === 'buscar' ? 'active' : ''}
               onClick={() => setVistaActual('buscar')}
             >
-              Buscar
+              Search
             </button>
           </li>
           <li>
@@ -672,7 +672,7 @@ if (esEdicion) {
               className={vistaActual === 'nuevo' ? 'active' : ''}
               onClick={iniciarCreacion}
             >
-              Nuevo
+              New
             </button>
           </li>
         </ul>
