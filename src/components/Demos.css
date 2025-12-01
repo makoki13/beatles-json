@@ -1,0 +1,161 @@
+/* src/components/Demos.css */
+/* Copia el contenido de Personajes.css o ajusta según sea necesario */
+.demos-container {
+  padding: 20px;
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 80vh;
+}
+
+/* Estilos del menú lateral (pueden ser compartidos) */
+.menu-lateral {
+  width: 100px;
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 5px;
+  margin-right: 20px;
+  align-self: flex-start;
+  height: fit-content;
+}
+
+.menu-lateral ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-lateral li {
+  margin-bottom: 10px;
+}
+
+.menu-lateral button {
+  width: 100%;
+  padding: 10px;
+  background-color: #ddd;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.menu-lateral button:hover {
+  background-color: #ccc;
+}
+
+.menu-lateral button.active {
+  background-color: #61dafb;
+  color: #282c34;
+}
+
+/* Estilos del contenido principal (pueden ser compartidos) */
+.contenido-principal {
+  flex: 1;
+  padding: 15px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  min-height: 300px;
+}
+
+/* Estilos del formulario (pueden ser compartidos o ajustados) */
+.cancion-form { /* Cambiado el nombre de la clase */
+  padding: 15px;
+}
+
+.cancion-form h3 {
+  margin-top: 0;
+}
+
+.cancion-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.cancion-form input[type="text"] {
+  width: calc(100% - 16px); 
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+.hay_grabacion {    
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+  font-size: 40px;
+}
+
+.cancion-form button {
+  margin-right: 10px;
+  margin-top: 10px;
+  padding: 8px 15px;
+}
+
+/* Estilos de la tabla (pueden ser compartidos o ajustados) */
+.tabla-demos { /* Cambiado el nombre de la clase */
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabla-demos table { /* Cambiado el nombre de la clase */
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.tabla-demos th, /* Cambiado el nombre de la clase */
+.tabla-demos td { /* Cambiado el nombre de la clase */
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.tabla-demos th { /* Cambiado el nombre de la clase */
+  background-color: #f2f2f2;
+}
+
+.tabla-demos button { /* Cambiado el nombre de la clase */
+  margin-right: 5px;
+  padding: 5px 10px;
+  font-size: 0.9em;
+}
+
+/* Botones de acción en la tabla (pueden ser compartidos) */
+.eliminar-btn {
+  background-color: #f44336 !important;
+  color: white;
+}
+
+.eliminar-btn:hover {
+  background-color: #da190b !important;
+}
+
+/* Mensajes (pueden ser compartidos) */
+.error-message {
+  color: red;
+  background-color: #ffe6e6;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.loading {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+/* Diseño Responsivo (puede ser compartido) */
+@media (min-width: 768px) {
+  .canciones-container { /* Cambiado el nombre de la clase */
+    flex-direction: row;
+  }
+  .contenido-principal {
+    margin-left: 20px;
+  }
+  .menu-lateral {
+    margin-right: 0;
+  }
+}
