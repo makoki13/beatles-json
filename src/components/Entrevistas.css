@@ -1,6 +1,6 @@
 /* src/components/Demos.css */
 /* Copia el contenido de Personajes.css o ajusta según sea necesario */
-.estudios-container {
+.entrevistas-container {
   padding: 20px;
   max-width: 100%;
   margin: 0 auto;
@@ -60,20 +60,20 @@
 }
 
 /* Estilos del formulario (pueden ser compartidos o ajustados) */
-.estudio-form { /* Cambiado el nombre de la clase */
+.cancion-form { /* Cambiado el nombre de la clase */
   padding: 15px;
 }
 
-.estudio-form h3 {
+.cancion-form h3 {
   margin-top: 0;
 }
 
-.estudio-form label {
+.cancion-form label {
   display: block;
   margin-bottom: 10px;
 }
 
-.estudio-form input[type="text"] {
+.cancion-form input[type="text"] {
   width: calc(100% - 16px); 
   padding: 8px;
   margin-top: 5px;
@@ -87,36 +87,36 @@
   font-size: 40px;
 }
 
-.estudio-form button {
+.cancion-form button {
   margin-right: 10px;
   margin-top: 10px;
   padding: 8px 15px;
 }
 
 /* Estilos de la tabla (pueden ser compartidos o ajustados) */
-.tabla-estudio { /* Cambiado el nombre de la clase */
+.tabla-entrevistas { /* Cambiado el nombre de la clase */
   width: 100%;
   overflow-x: auto;
 }
 
-.tabla-estudio table { /* Cambiado el nombre de la clase */
+.tabla-entrevistas table { /* Cambiado el nombre de la clase */
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
 }
 
-.tabla-demos th, /* Cambiado el nombre de la clase */
-.tabla-demos td { /* Cambiado el nombre de la clase */
+.tabla-entrevistas th, /* Cambiado el nombre de la clase */
+.tabla-entrevistas td { /* Cambiado el nombre de la clase */
   border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
 }
 
-.tabla-demos th { /* Cambiado el nombre de la clase */
+.tabla-entrevistas th { /* Cambiado el nombre de la clase */
   background-color: #f2f2f2;
 }
 
-.tabla-demos button { /* Cambiado el nombre de la clase */
+.tabla-entrevistas button { /* Cambiado el nombre de la clase */
   margin-right: 5px;
   padding: 5px 10px;
   font-size: 0.9em;
@@ -149,7 +149,7 @@
 
 /* Diseño Responsivo (puede ser compartido) */
 @media (min-width: 768px) {
-  .estudios-container { /* Cambiado el nombre de la clase */
+  .entrevistas-container { /* Cambiado el nombre de la clase */
     flex-direction: row;
   }
   .contenido-principal {

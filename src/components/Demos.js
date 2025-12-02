@@ -19,32 +19,29 @@ const Demos = () => {
   // --- Componente Reutilizable TablaDemos ---
   const TablaDemos = useCallback(({ demos, cargando, titulo = "Demos" }) => {
     return (
-      <div className="tabla-demos">
-        <h3>{titulo}</h3>
+      <div className="tabla-demos">        
         {demos.length === 0 ? (
-          <p>No hay datos para mostrar.</p>
+          <p>No records to show.</p>
         ) : (
           <table>
             <thead>
-              <tr>
-                <th>ID Grabación</th>
-                <th>Descripción Grabación</th>
-                <th>Tipo Grabación</th>
-                <th>Fecha Grabación</th>
-                <th>Lugar Grabación</th>
-                <th>¿Es de Estudio?</th>
+              <tr>                
+                <th>Recording Description</th>
+                <th>Kind</th>
+                <th>Date</th>
+                <th>Place</th>
+                <th>Studio?</th>
                 {/* No hay botones de Editar/Borrar en esta vista */}
               </tr>
             </thead>
             <tbody>
               {demos.map((demo) => (
-                <tr key={demo.id_grabacion}>
-                  <td>{demo.id_grabacion}</td>
+                <tr key={demo.id_grabacion}>                  
                   <td>{demo.grabacion ? demo.grabacion.descripcion : '-'}</td>
                   <td>{demo.grabacion ? demo.grabacion.tipo : '-'}</td>
                   <td>{demo.grabacion ? demo.grabacion.fecha : '-'}</td>
                   <td>{demo.grabacion ? demo.grabacion.lugar : '-'}</td>
-                  <td>{demo.estudio ? 'Sí' : 'No'}</td>
+                  <td>{demo.estudio ? 'Yes' : 'No'}</td>
                 </tr>
               ))}
             </tbody>
@@ -124,8 +121,7 @@ const Demos = () => {
   // --- Componentes de Vista Memorizados ---
 
   const VistaListar = useMemo(() => (
-    <div className="vista-listar">
-      <h3>Lista de Demos</h3>
+    <div className="vista-listar">      
       {mensajeError && vistaActual === 'listar' && <div className="error-message">{mensajeError}</div>}
       {cargando && vistaActual === 'listar' && <div className="loading">Cargando...</div>}
       {!cargando && vistaActual === 'listar' && demos.length === 0 ? (
@@ -141,11 +137,10 @@ const Demos = () => {
 
 
   const VistaBuscar = useMemo(() => (
-    <div className="vista-buscar">
-      <h3>Formulario de Búsqueda</h3>
+    <div className="vista-buscar">      
       <form onSubmit={(e) => { e.preventDefault(); ejecutarBusqueda(); }} className="busqueda-form">
         <label>
-          Descripción de la Grabación:
+          Recording description:
           <input
             type="text"
             name="descripcion_grabacion"
@@ -154,8 +149,8 @@ const Demos = () => {
           />
         </label>
         {/* Puedes añadir más campos de búsqueda aquí */}
-        <button type="submit" disabled={cargando}>Buscar</button>
-        <button type="button" onClick={limpiarBusqueda} disabled={cargando}>Limpiar</button>
+        <button type="submit" disabled={cargando}>Search</button>
+        <button type="button" onClick={limpiarBusqueda} disabled={cargando}>Reset</button>
       </form>
 
       {mensajeError && vistaActual === 'buscar' && <div className="error-message">{mensajeError}</div>}
@@ -172,7 +167,7 @@ const Demos = () => {
         <p>No se encontraron demos que coincidan con la búsqueda.</p>
       )}
       {!cargando && vistaActual === 'buscar' && resultadosBusqueda.length === 0 && !busquedaForm.descripcion_grabacion && (
-        <p>Introduzca términos de búsqueda y pulse "Buscar".</p>
+        <p>Fill the form and press "Search".</p>
       )}
     </div>
   ), [busquedaForm, ejecutarBusqueda, limpiarBusqueda, manejarCambioBusqueda, mensajeError, cargando, vistaActual, resultadosBusqueda]);
@@ -188,9 +183,7 @@ const Demos = () => {
 
   // --- Renderizado ---
   return (
-    <div className="demos-container">
-      <h2>Gestión de Demos</h2>
-
+    <div className="demos-container">      
       <nav className="menu-lateral">
         <ul>
           <li>
@@ -198,7 +191,7 @@ const Demos = () => {
               className={vistaActual === 'listar' ? 'active' : ''}
               onClick={() => setVistaActual('listar')}
             >
-              Listar
+              List
             </button>
           </li>
           <li>
@@ -206,7 +199,7 @@ const Demos = () => {
               className={vistaActual === 'buscar' ? 'active' : ''}
               onClick={() => setVistaActual('buscar')}
             >
-              Buscar
+              Search
             </button>
           </li>
           {/* No hay opción de "Nuevo" para Demos */}

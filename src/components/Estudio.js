@@ -20,27 +20,24 @@ const Estudios = () => {
   const TablaEstudios = useCallback(({ estudios, cargando, titulo = "Estudios" }) => {
     return (
       <div className="tabla-estudios">
-        <h3>{titulo}</h3>
         {estudios.length === 0 ? (
           <p>No hay datos para mostrar.</p>
         ) : (
           <table>
             <thead>
-              <tr>
-                <th>ID Grabación</th>
-                <th>Descripción Grabación</th>
-                <th>Tipo Grabación</th>
-                <th>Fecha Grabación</th>
-                <th>Lugar Grabación</th>
-                <th>Tipo de Estudio</th>
+              <tr>                
+                <th>Recording Description</th>
+                <th>Kind</th>
+                <th>Date</th>
+                <th>Place</th>
+                <th>Kind Take</th>
                 <th>Ordinal</th>
                 {/* No hay botones de Editar/Borrar en esta vista */}
               </tr>
             </thead>
             <tbody>
               {estudios.map((estudio) => (
-                <tr key={estudio.id_grabacion}>
-                  <td>{estudio.id_grabacion}</td>
+                <tr key={estudio.id_grabacion}>                  
                   <td>{estudio.grabacion ? estudio.grabacion.descripcion : '-'}</td>
                   <td>{estudio.grabacion ? estudio.grabacion.tipo : '-'}</td>
                   <td>{estudio.grabacion ? estudio.grabacion.fecha : '-'}</td>
@@ -126,8 +123,7 @@ const Estudios = () => {
   // --- Componentes de Vista Memorizados ---
 
   const VistaListar = useMemo(() => (
-    <div className="vista-listar">
-      <h3>Lista de Estudios</h3>
+    <div className="vista-listar">      
       {mensajeError && vistaActual === 'listar' && <div className="error-message">{mensajeError}</div>}
       {cargando && vistaActual === 'listar' && <div className="loading">Cargando...</div>}
       {!cargando && vistaActual === 'listar' && estudios.length === 0 ? (
@@ -143,11 +139,10 @@ const Estudios = () => {
 
 
   const VistaBuscar = useMemo(() => (
-    <div className="vista-buscar">
-      <h3>Formulario de Búsqueda</h3>
+    <div className="vista-buscar">      
       <form onSubmit={(e) => { e.preventDefault(); ejecutarBusqueda(); }} className="busqueda-form">
         <label>
-          Descripción de la Grabación:
+          Recording description:
           <input
             type="text"
             name="descripcion_grabacion"
@@ -156,12 +151,12 @@ const Estudios = () => {
           />
         </label>
         {/* Puedes añadir más campos de búsqueda aquí */}
-        <button type="submit" disabled={cargando}>Buscar</button>
-        <button type="button" onClick={limpiarBusqueda} disabled={cargando}>Limpiar</button>
+        <button type="submit" disabled={cargando}>Search</button>
+        <button type="button" onClick={limpiarBusqueda} disabled={cargando}>Reset</button>
       </form>
 
       {mensajeError && vistaActual === 'buscar' && <div className="error-message">{mensajeError}</div>}
-      {cargando && vistaActual === 'buscar' && <div className="loading">Buscando...</div>}
+      {cargando && vistaActual === 'buscar' && <div className="loading">Searching...</div>}
 
       {!cargando && vistaActual === 'buscar' && (
         <TablaEstudios
@@ -171,10 +166,10 @@ const Estudios = () => {
         />
       )}
       {!cargando && vistaActual === 'buscar' && resultadosBusqueda.length === 0 && busquedaForm.descripcion_grabacion && (
-        <p>No se encontraron estudios que coincidan con la búsqueda.</p>
+        <p>There's no data to show.</p>
       )}
       {!cargando && vistaActual === 'buscar' && resultadosBusqueda.length === 0 && !busquedaForm.descripcion_grabacion && (
-        <p>Introduzca términos de búsqueda y pulse "Buscar".</p>
+        <p>Introduce string to look up and choose "Search".</p>
       )}
     </div>
   ), [busquedaForm, ejecutarBusqueda, limpiarBusqueda, manejarCambioBusqueda, mensajeError, cargando, vistaActual, resultadosBusqueda]);
@@ -190,9 +185,7 @@ const Estudios = () => {
 
   // --- Renderizado ---
   return (
-    <div className="estudios-container">
-      <h2>Gestión de Estudios</h2>
-
+    <div className="estudios-container">      
       <nav className="menu-lateral">
         <ul>
           <li>
@@ -200,7 +193,7 @@ const Estudios = () => {
               className={vistaActual === 'listar' ? 'active' : ''}
               onClick={() => setVistaActual('listar')}
             >
-              Listar
+              List
             </button>
           </li>
           <li>
@@ -208,7 +201,7 @@ const Estudios = () => {
               className={vistaActual === 'buscar' ? 'active' : ''}
               onClick={() => setVistaActual('buscar')}
             >
-              Buscar
+              Search
             </button>
           </li>
           {/* No hay opción de "Nuevo" para Estudios */}

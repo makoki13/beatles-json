@@ -149,7 +149,7 @@
 
 /* Diseño Responsivo (puede ser compartido) */
 @media (min-width: 768px) {
-  .canciones-container { /* Cambiado el nombre de la clase */
+  .demos-container { /* Cambiado el nombre de la clase */
     flex-direction: row;
   }
   .contenido-principal {
