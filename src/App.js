@@ -13,7 +13,6 @@ import Actuaciones from './components/Actuaciones';
 import Entrevistas from './components/Entrevistas';
 import Remixes from './components/Remixes';
 import Obras from './components/Obras';
-import MasterCanciones from './components/MasterCanciones';
 import Masters from './components/Masters';
 import Discograficas from './components/Discograficas';
 import Publicaciones from './components/Publicaciones';
@@ -35,8 +34,7 @@ const MenuSuperior = () => {
     { to: "/actuaciones", label: "Performance", clase: "menu-listados" },
     { to: "/entrevistas", label: "Interviews", clase: "menu-listados" },
     { to: "/remixes", label: "Remixes", clase: "menu-superior" },
-    { to: "/obras", label: "Works", clase: "menu-superior" },
-    { to: "/master_canciones", label: "Master Songs", clase: "menu-superior" },
+    { to: "/obras", label: "Works", clase: "menu-superior" },    
     { to: "/masters", label: "Masters", clase: "menu-superior" },
     { to: "/discograficas", label: "Labels", clase: "menu-superior" },
     { to: "/publicaciones", label: "Publish", clase: "menu-superior" },
@@ -83,8 +81,7 @@ function App() {
             <Route path="/actuaciones" element={<Actuaciones />} />
             <Route path="/entrevistas" element={<Entrevistas />} />
             <Route path="/remixes" element={<Remixes />} />
-            <Route path="/obras" element={<Obras />} />
-            <Route path="/master_canciones" element={<MasterCanciones />} />
+            <Route path="/obras" element={<Obras />} />            
             <Route path="/masters" element={<Masters />} />
             <Route path="/discograficas" element={<Discograficas />} />
             <Route path="/publicaciones" element={<Publicaciones />} />
