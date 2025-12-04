@@ -4,6 +4,26 @@ import './Masters.css'; // Opcional: archivo de estilos
 
 const API_BASE_URL = 'http://localhost:3001/api';
 
+// --- Añadir la función formatearDuracion aquí ---
+  const formatearDuracion = (duracion) => {
+    if (!duracion) return '-';
+    if (typeof duracion === 'string') {
+      // Si ya es un string (HH:MM:SS o similar), devuélvelo
+      return duracion;
+    }
+    if (typeof duracion === 'object' && duracion.hours !== undefined) {
+      // Si es un objeto { hours: ..., minutes: ..., seconds: ... } (intervalo de PG)
+      const signo = duracion.hours < 0 ? '-' : '';
+      const horasAbs = Math.abs(duracion.hours);
+      const minutos = duracion.minutes || 0;
+      const segundos = duracion.seconds || 0;
+      return `${signo}${horasAbs.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+    }
+    // Si es otro tipo, devolver como string o un valor por defecto
+    return String(duracion);
+  };
+  // --- Fin Añadido ---
+
 const Masters = () => {
   const [vistaActual, setVistaActual] = useState('listar');
   const [masters, setMasters] = useState([]);
@@ -20,10 +40,20 @@ const Masters = () => {
     matrix_number: ''
   });
 
+  // --- Añadir estado para Obras ---
+  const [obras, setObras] = useState([]);
+  // --- Fin Añadir estado para Obras ---
+
   // Estados para gestionar las master_canciones asociadas
   const [masterCancionesAsociadas, setMasterCancionesAsociadas] = useState([]);
-  const [masterCancionesDisponibles, setMasterCancionesDisponibles] = useState([]);
-  const [nuevaCancionSeleccionada, setNuevaCancionSeleccionada] = useState(''); // Para el select de añadir
+  // --- Estado para el formulario de nueva MasterCancion ---
+  const [nuevaMasterCancionForm, setNuevaMasterCancionForm] = useState({
+    cancion_id: '', // Opcional: ID de la canción original
+    descripcion: '',
+    duracion: '' // Formato HH:MM:SS o segundos como string
+  });
+  const [cancionesDisponibles, setCancionesDisponibles] = useState([]); // Opcional: para el select de cancion_id
+  // --- Fin Estado para el formulario de nueva MasterCancion ---
 
   const [esEdicion, setEsEdicion] = useState(false);
   const [cargando, setCargando] = useState(false);
@@ -32,14 +62,13 @@ const Masters = () => {
   // --- Componente Reutilizable TablaMasters ---
   const TablaMasters = useCallback(({ masters, onEditar, onEliminar, cargando, titulo = "Masters" }) => {
     return (
-      <div className="tabla-masters">        
+      <div className="tabla-masters">
         {masters.length === 0 ? (
           <p>There's no data to show.</p>
         ) : (
           <table>
             <thead>
-              <tr>
-                <th>ID</th>
+              <tr>                
                 <th>Work</th>
                 <th>Date</th>
                 <th>Matrix Number</th>
@@ -48,8 +77,7 @@ const Masters = () => {
             </thead>
             <tbody>
               {masters.map((master) => (
-                <tr key={master.id}>
-                  <td>{master.id}</td>
+                <tr key={master.id}>                  
                   <td>{master.obra ? master.obra.titulo : '-'}</td>
                   <td>{master.fecha || '-'}</td>
                   <td>{master.matrix_number || '-'}</td>
@@ -84,16 +112,15 @@ const Masters = () => {
       <div className="tabla-master-canciones">
         <h4>{titulo}</h4>
         {canciones.length === 0 ? (
-          <p>There's no songs associated to this master.</p>
+          <p>There's no songs associated with this master.</p>
         ) : (
           <table>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Song</th>
-                <th>Master Descriptión</th>
-                <th>Master length</th>
-                <th>Actions</th>
+                <th>Canción Original</th>
+                <th>Descripción (Master)</th>
+                <th>Duración (Master)</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -102,7 +129,7 @@ const Masters = () => {
                   <td>{mc.id}</td>
                   <td>{mc.cancion ? mc.cancion.nombre : '-'}</td>
                   <td>{mc.descripcion || '-'}</td>
-                  <td>{mc.duracion || '-'}</td>
+                  <td>{formatearDuracion(mc.duracion)}</td>
                   <td>
                     {/* Botón para editar detalles específicos de la master_cancion si es necesario */}
                     {/* <button onClick={() => onEditarDetalle(mc)}>Editar Detalle</button> */}
@@ -111,7 +138,7 @@ const Masters = () => {
                       disabled={cargando}
                       className="eliminar-btn"
                     >
-                      Delete
+                      Quitar
                     </button>
                   </td>
                 </tr>
@@ -145,20 +172,40 @@ const Masters = () => {
     }
   }, []);
 
-  // Cargar master_canciones disponibles para el select de añadir
-  const obtenerMasterCancionesDisponibles = useCallback(async () => {
+  // --- Nueva Función: Cargar Obras ---
+  const obtenerObras = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/master_canciones?sort=descripcion&order=ASC`);
+      const response = await fetch(`${API_BASE_URL}/obras?sort=titulo&order=ASC`);
       if (!response.ok) {
-        throw new Error(`Error al obtener master_canciones disponibles: ${response.status}`);
+        throw new Error(`Error al obtener obras: ${response.status}`);
       }
       const data = await response.json();
-      setMasterCancionesDisponibles(data);
+      setObras(data); // Actualiza el estado con la lista de obras
     } catch (error) {
-      console.error('Error al cargar master_canciones disponibles para añadir:', error);
-      setMasterCancionesDisponibles([]);
+      console.error('Error al cargar obras para el desplegable:', error);
+      setObras([]); // Asegura que el estado sea un array vacío en caso de error
+      setMensajeError(`Error al cargar las obras: ${error.message}`);
     }
   }, []);
+  // --- Fin Nueva Función ---
+
+  // --- Nueva Función: Cargar Canciones (para el select opcional) ---
+  const obtenerCanciones = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/canciones?sort=nombre&order=ASC`);
+      if (!response.ok) {
+        throw new Error(`Error al obtener canciones: ${response.status}`);
+      }
+      const data = await response.json();
+      setCancionesDisponibles(data);
+    } catch (error) {
+      console.error('Error al cargar canciones para el desplegable de MasterCancion:', error);
+      setCancionesDisponibles([]); // Asegura que el estado sea un array vacío en caso de error
+      // Opcional: Mostrar mensaje de error al usuario
+      // setMensajeError(`Error al cargar las canciones: ${error.message}`);
+    }
+  }, []);
+  // --- Fin Nueva Función ---
 
   const manejarCambio = useCallback((e) => {
     const { name, value } = e.target;
@@ -168,6 +215,16 @@ const Masters = () => {
     }));
   }, []);
 
+  // --- Nueva Función: Manejar cambio en el formulario de nueva MasterCancion ---
+  const manejarCambioNuevaMasterCancion = useCallback((e) => {
+    const { name, value } = e.target;
+    setNuevaMasterCancionForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }, []);
+  // --- Fin Nueva Función ---
+
   const manejarCambioBusqueda = useCallback((e) => {
     const { name, value } = e.target;
     setBusquedaForm(prev => ({
@@ -176,35 +233,55 @@ const Masters = () => {
     }));
   }, []);
 
-  // Manejar cambios en la selección de canción para añadir
-  const manejarCambioNuevaCancion = useCallback((e) => {
-    setNuevaCancionSeleccionada(e.target.value);
-  }, []);
-
-  // Añadir una master_cancion a la lista temporal del formulario
-  const anadirCancionAMaster = useCallback(() => {
-    if (!nuevaCancionSeleccionada) {
-      setMensajeError('Por favor, seleccione una canción para añadir.');
+  // --- Nueva Función: Crear y Añadir una nueva MasterCancion ---
+  const crearYAnadirCancionAMaster = useCallback(async () => {
+    // Validar campos si es necesario antes de enviar
+    if (!nuevaMasterCancionForm.descripcion) { // Ejemplo de validación mínima
+      setMensajeError('La descripción es obligatoria para la canción del master.');
       return;
     }
 
-    const cancionId = parseInt(nuevaCancionSeleccionada, 10);
-    // Verificar si ya está en la lista
-    if (masterCancionesAsociadas.some(mc => mc.id === cancionId)) {
-      setMensajeError('Esta canción ya está asociada al master.');
-      return;
-    }
+    setCargando(true);
+    setMensajeError('');
+    try {
+      // Llamar a la API para crear la nueva MasterCancion
+      const response = await fetch(`${API_BASE_URL}/master_canciones`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nuevaMasterCancionForm), // Enviar los datos del formulario
+      });
 
-    // Buscar la canción completa en las disponibles
-    const cancionCompleta = masterCancionesDisponibles.find(mc => mc.id === cancionId);
-    if (cancionCompleta) {
-      setMasterCancionesAsociadas(prev => [...prev, cancionCompleta]);
-      setNuevaCancionSeleccionada(''); // Limpiar el select
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al crear la canción del master');
+      }
+
+      const nuevaCancion = await response.json();
+      console.log('Creada nueva MasterCancion:', nuevaCancion);
+
+      console.log('DEBUG: Nueva MasterCancion creada con ID:', nuevaCancion.id); // <-- Añadir este log
+      console.log('DEBUG: Objeto completa de nueva MasterCancion:', nuevaCancion); // <-- Y este para ver la estructura
+  
+      // Añadir la nueva canción a la lista local de canciones asociadas al master
+      setMasterCancionesAsociadas(prev => [...prev, nuevaCancion]);
+
+      // Limpiar el formulario de nueva canción
+      setNuevaMasterCancionForm({
+        cancion_id: '',
+        descripcion: '',
+        duracion: ''
+      });
+
       setMensajeError(''); // Limpiar mensaje de error si se añadió correctamente
-    } else {
-      setMensajeError('Canción seleccionada no encontrada.');
+    } catch (error) {
+      console.error('Error al crear y añadir la canción del master:', error);
+      setMensajeError(error.message);
+    } finally {
+      setCargando(false); // Asegurar que el estado de carga se restablece
     }
-  }, [nuevaCancionSeleccionada, masterCancionesAsociadas, masterCancionesDisponibles]);
+  }, [nuevaMasterCancionForm]);
 
   // Quitar una master_cancion de la lista temporal del formulario
   const quitarCancionDeMaster = useCallback((idCancion) => {
@@ -260,6 +337,11 @@ const Masters = () => {
         matrix_number: ''
       });
       setMasterCancionesAsociadas([]); // Limpiar lista de canciones asociadas
+      setNuevaMasterCancionForm({ // Limpiar también el formulario de nueva canción
+        cancion_id: '',
+        descripcion: '',
+        duracion: ''
+      });
       setEsEdicion(false);
 
       if (vistaActual === 'listar' || vistaActual === 'nuevo') {
@@ -293,7 +375,11 @@ const Masters = () => {
       matrix_number: ''
     });
     setMasterCancionesAsociadas([]); // Limpiar lista de canciones asociadas
-    setNuevaCancionSeleccionada(''); // Limpiar selección de nueva canción
+    setNuevaMasterCancionForm({ // Limpiar formulario de nueva canción
+      cancion_id: '',
+      descripcion: '',
+      duracion: ''
+    });
     setEsEdicion(false);
     setMensajeError('');
     setVistaActual('nuevo');
@@ -374,7 +460,7 @@ const Masters = () => {
       {mensajeError && vistaActual === 'listar' && <div className="error-message">{mensajeError}</div>}
       {cargando && vistaActual === 'listar' && <div className="loading">Cargando...</div>}
       {!cargando && vistaActual === 'listar' && masters.length === 0 ? (
-        <p>There's no registered masters.</p>
+        <p>There's no master recordings.</p>
       ) : vistaActual === 'listar' ? (
         <TablaMasters
           masters={masters}
@@ -391,7 +477,7 @@ const Masters = () => {
     <div className="vista-buscar">      
       <form onSubmit={(e) => { e.preventDefault(); ejecutarBusqueda(); }} className="busqueda-form">
         <label>
-          Master title:
+          Work Title:
           <input
             type="text"
             name="titulo_obra"
@@ -405,7 +491,7 @@ const Masters = () => {
       </form>
 
       {mensajeError && vistaActual === 'buscar' && <div className="error-message">{mensajeError}</div>}
-      {cargando && vistaActual === 'buscar' && <div className="loading">Buscando...</div>}
+      {cargando && vistaActual === 'buscar' && <div className="loading">Searching...</div>}
 
       {!cargando && vistaActual === 'buscar' && (
         <TablaMasters
@@ -417,7 +503,7 @@ const Masters = () => {
         />
       )}
       {!cargando && vistaActual === 'buscar' && resultadosBusqueda.length === 0 && busquedaForm.titulo_obra && (
-        <p>There's no data to show.</p>
+        <p>No se encontraron masters que coincidan con la búsqueda.</p>
       )}
       {!cargando && vistaActual === 'buscar' && resultadosBusqueda.length === 0 && !busquedaForm.titulo_obra && (
         <p>Fill the form and press "Search".</p>
@@ -439,9 +525,12 @@ const Masters = () => {
             value={masterForm.obra_id}
             onChange={manejarCambio}
           >
-            <option value="">-- Seleccione una obra --</option>
-            {/* Deberías cargar las obras aquí, similar a como se hizo con canciones/sesiones */}
-            {/* Por ahora, se asume que se manejan fuera o se deja como input de ID */}
+            <option value="">-- Select a work --</option>
+            {/* --- Cambio Aquí: Usar el estado 'obras' para generar las opciones --- */}
+            {obras.map(obra => (
+              <option key={obra.id} value={obra.id}>{obra.titulo}</option>
+            ))}
+            {/* --- Fin Cambio --- */}
           </select>
         </label>
         <label>
@@ -464,29 +553,48 @@ const Masters = () => {
         </label>
 
         {/* Sección para gestionar MasterCanciones asociadas */}
-        <div className="seccion-master-canciones">
-          <h4>Master Songs</h4>
-          <div className="anadir-cancion-form">
+        <div className="seccion-master-canciones">          
+          {/* --- Nuevo Formulario: Crear Nueva MasterCancion --- */}
+          <div className="crear-cancion-form">
+            <h5>Add new master song</h5>
             <label>
-              Add song:
+              Original song:
               <select
-                value={nuevaCancionSeleccionada}
-                onChange={manejarCambioNuevaCancion}
+                name="cancion_id"
+                value={nuevaMasterCancionForm.cancion_id}
+                onChange={manejarCambioNuevaMasterCancion}
               >
-                <option value="">-- Select a song --</option>
-                {masterCancionesDisponibles
-                  .filter(mc => !masterCancionesAsociadas.some(assoc => assoc.id === mc.id)) // Filtrar las ya asociadas
-                  .map(mc => (
-                    <option key={mc.id} value={mc.id}>
-                      {mc.descripcion || mc.cancion?.nombre || `Master Canción ID ${mc.id}`}
-                    </option>
+                <option value="">-- Seleccione una canción --</option>
+                {/* Cargar canciones aquí si es necesario */}
+                {cancionesDisponibles.map(c => (
+                  <option key={c.id} value={c.id}>{c.nombre}</option>
                 ))}
               </select>
             </label>
-            <button type="button" onClick={anadirCancionAMaster} disabled={!nuevaCancionSeleccionada || cargando}>
+            <label>
+              Description:
+              <input
+                type="text"
+                name="descripcion"
+                value={nuevaMasterCancionForm.descripcion}
+                onChange={manejarCambioNuevaMasterCancion}
+                required // Hacerlo obligatorio si es necesario
+              />
+            </label>
+            <label>
+              Length (HH:MM:SS or seconds):
+              <input
+                type="text"
+                name="duracion"
+                value={nuevaMasterCancionForm.duracion}
+                onChange={manejarCambioNuevaMasterCancion}
+              />
+            </label>
+            <button type="button" onClick={crearYAnadirCancionAMaster} disabled={cargando}>
               Add
             </button>
           </div>
+          {/* --- Fin Nuevo Formulario --- */}
           <TablaMasterCancionesAsociadas
             canciones={masterCancionesAsociadas}
             onEliminar={quitarCancionDeMaster} // Esta función quita localmente
@@ -503,11 +611,11 @@ const Masters = () => {
           onClick={() => setVistaActual('listar')}
           disabled={cargando}
         >
-          Cancel
+          Cancelar
         </button>
       </form>
     </div>
-  ), [masterForm, mensajeError, cargando, esEdicion, vistaActual, manejarCambio, manejarSubmit, masterCancionesAsociadas, nuevaCancionSeleccionada, manejarCambioNuevaCancion, anadirCancionAMaster, quitarCancionDeMaster, masterCancionesDisponibles]);
+  ), [masterForm, mensajeError, cargando, esEdicion, vistaActual, manejarCambio, manejarSubmit, obras, masterCancionesAsociadas, nuevaMasterCancionForm, manejarCambioNuevaMasterCancion, crearYAnadirCancionAMaster, cancionesDisponibles, quitarCancionDeMaster]); // Añadir nuevas dependencias
 
 
   // --- Efectos ---
@@ -517,17 +625,26 @@ const Masters = () => {
     }
   }, [vistaActual, obtenerMasters]);
 
-  // Cargar master_canciones disponibles cuando se monte el componente o se cambie a la vista de edición/creación
+  // --- Nuevo Efecto: Cargar Obras ---
   useEffect(() => {
-    if (vistaActual === 'nuevo') {
-      obtenerMasterCancionesDisponibles();
+    if ((vistaActual === 'nuevo' || vistaActual === 'listar') && obras.length === 0) {
+         obtenerObras();
     }
-  }, [vistaActual, obtenerMasterCancionesDisponibles]);
+  }, [vistaActual, obras.length, obtenerObras]);
+  // --- Fin Nuevo Efecto ---
+
+  // --- Nuevo Efecto: Cargar Canciones para el select de nueva MasterCancion ---
+  useEffect(() => {
+    if (vistaActual === 'nuevo') { // Cargar canciones cuando se entre a la vista de nuevo/editar
+      obtenerCanciones();
+    }
+  }, [vistaActual, obtenerCanciones]);
+  // --- Fin Nuevo Efecto ---
 
 
   // --- Renderizado ---
   return (
-    <div className="masters-container">      
+    <div className="masters-container">
       <nav className="menu-lateral">
         <ul>
           <li>
@@ -551,7 +668,7 @@ const Masters = () => {
               className={vistaActual === 'nuevo' ? 'active' : ''}
               onClick={iniciarCreacion}
             >
-              Nuevo
+              New
             </button>
           </li>
         </ul>
