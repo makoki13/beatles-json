@@ -38,6 +38,7 @@
   text-align: center;
   border-radius: 4px;
   font-size: 24px;
+  font-family: 'Beatles';
 }
 
 .menu-lateral button:hover {
@@ -59,13 +60,6 @@
   min-height: 300px; /* Altura mínima para el contenido */
 }
 
-/* --- Estilos comunes para vistas --- */
-.vista-listar,
-.vista-buscar,
-.vista-nuevo {
-  /* Puedes añadir estilos específicos para cada vista aquí si es necesario */
-}
-
 /* --- Estilos del formulario --- */
 .personaje-form {
   /* background-color: #f9f9f9; Removido, ahora está en .contenido-principal */
@@ -82,6 +76,7 @@
 .personaje-form label {
   display: block;
   margin-bottom: 0px;
+  font-family: 'Beatles';
 }
 
 .personaje-form input {
@@ -95,12 +90,43 @@
   margin-right: 10px;
   margin-top: 10px;
   padding: 8px 15px;
+  font-family: 'Beatles';
 }
 
 /* --- Estilos de la tabla --- */
 .tabla-personajes {
   width: 100%;
   overflow-x: auto; /* Para manejar tablas anchas en pantallas pequeñas */
+}
+
+.vista-buscar input {
+  width: calc(100% - 16px);
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+.vista-buscar button {
+  margin-right: 5px;
+  margin-top: 10px;
+  padding: 5px 10px;
+  font-size: 0.9em;
+  font-family: 'Beatles';
+}
+
+.vista-nuevo label {
+  display: block;
+  margin-bottom: 0px;
+  font-family: 'Beatles';
+  margin-top: 15px;
+}
+
+.vista-nuevo button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  font-size: 1.2em;
+  font-family: 'Beatles';
+  min-width: 140px;
 }
 
 .tabla-personajes table {
@@ -114,16 +140,25 @@
   border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
+  font-family: 'Beatles';
+  font-size: 18px;
 }
 
 .tabla-personajes th {
   background-color: #f2f2f2;
+  font-family: 'Beatles';
 }
 
 .tabla-personajes button {
   margin-right: 5px;
   padding: 5px 10px;
   font-size: 0.9em;
+  font-family: 'Beatles';
+}
+
+.vista-buscar {
+  font-size: 1.2em;
+  font-family: 'Beatles';
 }
 
 /* --- Botones de acción en la tabla --- */

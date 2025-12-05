@@ -1,7 +1,7 @@
 /* src/components/Canciones.css */
 /* Copia el contenido de Personajes.css o ajusta según sea necesario */
 .canciones-container {
-  padding: 20px;
+  padding: 0px;
   max-width: 100%;
   margin: 0 auto;
   display: flex;
@@ -110,6 +110,8 @@
   border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
+  font-family: 'Beatles';
+  font-size: 18px;
 }
 
 .tabla-canciones th { /* Cambiado el nombre de la clase */
@@ -119,7 +121,8 @@
 .tabla-canciones button { /* Cambiado el nombre de la clase */
   margin-right: 5px;
   padding: 5px 10px;
-  font-size: 0.9em;
+  font-size: 1.2em;
+  font-family: 'Beatles';
 }
 
 /* Botones de acción en la tabla (pueden ser compartidos) */

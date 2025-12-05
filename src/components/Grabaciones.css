@@ -1,7 +1,6 @@
 /* src/components/Canciones.css */
-/* Copia el contenido de Personajes.css o ajusta según sea necesario */
 .grabaciones-container {
-  padding: 20px;
+  padding: 0px;
   max-width: 100%;
   margin: 0 auto;
   display: flex;
@@ -52,16 +51,15 @@
 /* Estilos del contenido principal (pueden ser compartidos) */
 .contenido-principal {
   flex: 1;
-  padding: 15px;
+  padding: 0px;
   background-color: #fff;
   border: 1px solid #ddd;
-  border-radius: 5px;
-  min-height: 300px;
+  border-radius: 5px;  
 }
 
 /* Estilos del formulario (pueden ser compartidos o ajustados) */
 .grabacion-form { /* Cambiado el nombre de la clase */
-  padding: 15px;
+  padding: 0px;
 }
 
 .grabacion-form h3 {
@@ -70,7 +68,7 @@
 
 .grabacion-form label {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
 }
 
 .grabacion-form input[type="text"] {
@@ -115,6 +113,49 @@
   font-size: 0.9em;
 }
 
+.vista-nuevo { /* Cambiado el nombre de la clase */
+  padding: 0px;
+  margin: 0px;
+}
+
+
+/* --- Estilos de la tabla --- */
+.tabla-grabaciones {
+  width: 100%;
+  overflow-x: auto; /* Para manejar tablas anchas en pantallas pequeñas */
+}
+
+.tabla-grabaciones table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.tabla-grabaciones th,
+.tabla-grabaciones td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  font-family: 'Beatles';
+}
+
+.tabla-grabaciones th {
+  background-color: #f2f2f2;
+}
+
+.tabla-grabaciones button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  font-size: 1.2em;
+  font-family: 'Beatles';
+}
+
+.titulo-opcion {
+  padding:0px;  
+  color: brown;
+  font-family: 'Beatles';
+}
+
 /* Botones de acción en la tabla (pueden ser compartidos) */
 .eliminar-btn {
   background-color: #f44336 !important;
@@ -142,7 +183,7 @@
 
 /* src/components/Grabaciones.css */
 .grabaciones-container {
-  padding: 20px;
+  padding: 0px;
   max-width: 100%;
   margin: 0 auto;
   display: flex; /* Usamos flexbox para el layout */
@@ -176,9 +217,9 @@
 /* ... (resto de los estilos, pero sin el bloque @media) ... */
 
 /* Elimina esta sección completa */
-/*
+
 @media (min-width: 768px) {
-  .grabaciones-container { // O .personajes-container, etc.
+  .grabaciones-container { 
     flex-direction: row;
   }
   .contenido-principal {
@@ -188,4 +229,3 @@
     margin-right: 0;
   }
 }
-*/

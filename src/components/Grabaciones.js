@@ -1,6 +1,6 @@
 // src/components/Grabaciones.js
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import './Grabaciones.css'; // Opcional: archivo de estilos
+import './Grabaciones.css';
 
 const API_BASE_URL = 'http://localhost:3001/api';
 
@@ -54,8 +54,11 @@ const Grabaciones = () => {
                 <th>Description</th>
                 <th>Song</th>
                 <th>Kind</th>
+                <th>Duration</th>
                 <th>Date</th>
+                <th>Place</th>
                 <th>Session</th>
+                <th>Available</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -65,8 +68,11 @@ const Grabaciones = () => {
                   <td>{grabacion.descripcion || '-'}</td>
                   <td>{grabacion.cancion ? grabacion.cancion.nombre : '-'}</td> {/* Muestra el nombre de la canción */}
                   <td>{grabacion.tipo}</td>
-                  <td>{grabacion.fecha || '-'}</td>
-                  <td>{grabacion.sesion ? grabacion.sesion.descripcion : '-'}</td> {/* Muestra la descripción de la sesión */}
+                  <td>{grabacion.duracion.hours + ':' + grabacion.duracion.minutes}</td>
+                  <td>{grabacion.fecha || ''}</td>
+                  <td>{grabacion.lugar || ''}</td>
+                  <td>{grabacion.sesion ? grabacion.sesion.descripcion : ''}</td> {/* Muestra la descripción de la sesión */}
+                  <td>{grabacion.publicacion ? grabacion.publicacion : ''}</td> {/* Muestra la disponibilidad de la sesión */}
                   <td>
                     <button
                       onClick={() => onEditar(grabacion)}
@@ -438,7 +444,7 @@ if (esEdicion) {
 
   const VistaNuevo = useMemo(() => (
     <div className="vista-nuevo">
-      <h3>{esEdicion ? 'Edit Recording' : 'New Recording'}</h3>
+      <h3 className='titulo-opcion'>{esEdicion ? 'Edit Recording' : 'New Recording'}</h3>
       {mensajeError && vistaActual === 'nuevo' && <div className="error-message">{mensajeError}</div>}
       <form onSubmit={manejarSubmit} className="grabacion-form">
         {esEdicion && <input type="hidden" name="id" value={grabacionForm.id} />}
@@ -467,6 +473,19 @@ if (esEdicion) {
         
         <div style={{ display: 'flex', gap: '16px' }}>
           <label>
+          Session:
+            <select
+              name="sesion_id"
+              value={grabacionForm.sesion_id}
+              onChange={manejarCambio}
+            >
+              <option value="">-- Select session --</option>
+              {sesiones.map(sesion => (
+                <option key={sesion.id} value={sesion.id}>{sesion.descripcion}</option>
+              ))}
+            </select>
+          </label>
+          <label>
             Time (MM:SS or seconds):
             <input
               type="text"
@@ -486,6 +505,8 @@ if (esEdicion) {
             />
           </label>
         </div>
+        
+        <div style={{ backgroundColor: 'pink', border: '2px black solid', padding: '10px', height: '150px' }}>
         <label>
           Kind:
           <select
@@ -494,7 +515,7 @@ if (esEdicion) {
             onChange={manejarCambio}
           >
             <option value="Demo">Demo</option>
-            <option value="Toma">Toma</option>
+            <option value="Toma">Studio</option>
             <option value="Actuación">Performance</option>
             <option value="Entrevista">Interview</option>
           </select>
@@ -519,34 +540,37 @@ if (esEdicion) {
         {grabacionForm.tipo === 'Toma' && (
           <div className="campos-especificos">
             <h4>Take details</h4>
-            <label>
-              Kind of take:
-              <select
-                name="tipo_estudio"
-                value={grabacionForm.tipo_estudio}
-                onChange={manejarCambio}
-              >
-                <option value="Toma">Take</option>
-                <option value="Overdub">Overdub</option>
-                <option value="Toma+Overdub">Take+Overdub</option>
-              </select>
-            </label>
-            <label>
-              Take number (Ordinal):
-              <input
-                type="number"
-                name="ordinal"
-                value={grabacionForm.ordinal}
-                onChange={manejarCambio}
-                min="1" // Ajusta según sea necesario
-              />
-            </label>
+            <div style={{ display: 'flex', gap: '16px' }}>
+                <label>
+                  Kind of take:
+                  <select
+                    name="tipo_estudio"
+                    value={grabacionForm.tipo_estudio}
+                    onChange={manejarCambio}
+                  >
+                    <option value="Toma">Take</option>
+                    <option value="Overdub">Overdub</option>
+                    <option value="Toma+Overdub">Take+Overdub</option>
+                  </select>
+                </label>
+                <label>
+                  Take number (Ordinal):
+                  <input
+                    type="number"
+                    name="ordinal"
+                    value={grabacionForm.ordinal}
+                    onChange={manejarCambio}
+                    min="1" // Ajusta según sea necesario
+                  />
+                </label>              
+              </div>
           </div>
         )}
 
         {grabacionForm.tipo === 'Actuación' && (
           <div className="campos-especificos">
             <h4>Performance details</h4>
+            <div style={{ display: 'flex', gap: '16px' }}>
             <label>
               Kind of performance:
               <select
@@ -570,9 +594,10 @@ if (esEdicion) {
                 required // Si es obligatorio según el modelo
               />
             </label>
+            </div>
           </div>
         )}
-
+        </div>
         <label>
           Place:
           <input
@@ -580,21 +605,24 @@ if (esEdicion) {
             name="lugar"
             value={grabacionForm.lugar}
             onChange={manejarCambio}
+            style={{verticalAlign: 'top', fontFamily: 'Beatles', fontSize: '1.2em', textAlign: 'left'}}
           />
         </label>
-        <label>
+        <label style={{ display: 'flex', gap: '16px' }}>
           Publish:
           <select
             name="publicacion"
             value={grabacionForm.publicacion}
             onChange={manejarCambio}
+            style={{verticalAlign: 'top', fontFamily: 'Beatles', fontSize: '1.2em', textAlign: 'center'}}
           >
-            <option value="">-- Search status --</option>
+            <option value="">-- Select --</option>
             <option value="Existe_Sin_Publicar">Not published</option>
-            <option value="Publico">Public</option>
+            <option value="Publico">Bootleg</option>
             <option value="Oficial">Official</option>
-          </select>
+          </select>          
         </label>
+        {/*
         <label>
           Media:
           <select
@@ -609,20 +637,7 @@ if (esEdicion) {
             <option value="Oficial">Official</option>
           </select>
         </label>
-        <label>
-          Session:
-          <select
-            name="sesion_id"
-            value={grabacionForm.sesion_id}
-            onChange={manejarCambio}
-          >
-            <option value="">-- Select session --</option>
-            {sesiones.map(sesion => (
-              <option key={sesion.id} value={sesion.id}>{sesion.descripcion}</option>
-            ))}
-          </select>
-        </label>
-
+        */}
         <button type="submit" disabled={cargando}>
           {esEdicion ? 'Update' : 'New'}
         </button>

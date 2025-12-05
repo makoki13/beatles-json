@@ -1,6 +1,6 @@
 /* src/components/Personajes.css */
 .sesiones-container {
-  padding: 20px;
+  padding: 0px;
   max-width: 100%;
   margin: 0 auto;
   display: flex; /* Usamos flexbox para el layout */
@@ -59,13 +59,6 @@
   min-height: 300px; /* Altura mínima para el contenido */
 }
 
-/* --- Estilos comunes para vistas --- */
-.vista-listar,
-.vista-buscar,
-.vista-nuevo {
-  /* Puedes añadir estilos específicos para cada vista aquí si es necesario */
-}
-
 /* --- Estilos del formulario --- */
 .sesion-form {
   /* background-color: #f9f9f9; Removido, ahora está en .contenido-principal */
@@ -114,6 +107,7 @@
   border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
+  font-family: 'Beatles';
 }
 
 .tabla-sesiones th {
@@ -123,7 +117,8 @@
 .tabla-sesiones button {
   margin-right: 5px;
   padding: 5px 10px;
-  font-size: 0.9em;
+  font-size: 1.2em;
+  font-family: 'Beatles';
 }
 
 /* --- Botones de acción en la tabla --- */

@@ -25,19 +25,19 @@ const MenuSuperior = () => {
   const isActive = (path) => location.pathname === path;
 
   const menuItems = [
-    { to: "/personajes", label: "People", clase: "menu-superior" },
-    { to: "/canciones", label: "Songs", clase: "menu-superior" },
-    { to: "/sesiones", label: "Sessions", clase: "menu-superior" },
-    { to: "/grabaciones", label: "Recordings", clase: "menu-superior" },
-    { to: "/demos", label: "Demos", clase: "menu-listados" },
-    { to: "/estudios", label: "Studio", clase: "menu-listados" },
-    { to: "/actuaciones", label: "Performance", clase: "menu-listados" },
-    { to: "/entrevistas", label: "Interviews", clase: "menu-listados" },
-    { to: "/remixes", label: "Remixes", clase: "menu-superior" },
-    { to: "/obras", label: "Works", clase: "menu-superior" },    
-    { to: "/masters", label: "Masters", clase: "menu-superior" },
-    { to: "/discograficas", label: "Labels", clase: "menu-superior" },
-    { to: "/publicaciones", label: "Publish", clase: "menu-superior" },
+    { to: "/personajes", label: "People" },
+    { to: "/canciones", label: "Songs" },
+    { to: "/sesiones", label: "Sessions" },
+    { to: "/grabaciones", label: "Recordings" },
+    { to: "/demos", label: "Demos" },
+    { to: "/estudios", label: "Studio" },
+    { to: "/actuaciones", label: "Performance" },
+    { to: "/entrevistas", label: "Interviews" },
+    { to: "/remixes", label: "Remixes" },
+    { to: "/obras", label: "Works" },    
+    { to: "/masters", label: "Masters" },
+    { to: "/discograficas", label: "Labels" },
+    { to: "/publicaciones", label: "Publish" },
   ];
 
   return (
@@ -47,7 +47,7 @@ const MenuSuperior = () => {
           <li key={item.to}>
             <Link
               to={item.to}
-              className={isActive(item.to) ? item.clase : ''}
+              className={isActive(item.to) ? 'chequeado' : ''}
             >
               {item.label}
             </Link>

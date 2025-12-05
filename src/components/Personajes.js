@@ -398,13 +398,13 @@ const manejarSubmit = useCallback(async (e) => {
   // VistaNuevo: Esta es la clave para mantener el foco
   const VistaNuevo = useMemo(() => (
     <div className="vista-nuevo">
-      <h3>{esEdicion ? 'Editar Personaje' : 'Nuevo Personaje'}</h3>
+      <h3>{esEdicion ? 'Edit Person' : 'New Person'}</h3>
       {mensajeError && vistaActual === 'nuevo' && <div className="error-message">{mensajeError}</div>}
       <form onSubmit={manejarSubmit} className="personaje-form">
         {/* Añadimos un campo oculto para el ID en modo edición si es necesario para la API */}
         {esEdicion && <input type="hidden" name="id" value={personajeForm.id} />}
         <label>
-          Nombre:
+          Name:
           <input
             type="text"
             name="nombre"
@@ -414,7 +414,7 @@ const manejarSubmit = useCallback(async (e) => {
           />
         </label>
         <label>
-          Fecha de Nacimiento:
+          Born Date:
           <input
             type="date"
             name="fecha_nacimiento"
@@ -422,8 +422,7 @@ const manejarSubmit = useCallback(async (e) => {
             onChange={manejarCambio} // Pasa la función memorizada
           />
         </label>
-        <label>
-          Lugar de Nacimiento:
+        <label>Born Place:
           <input
             type="text"
             name="lugar_nacimiento"
@@ -432,7 +431,7 @@ const manejarSubmit = useCallback(async (e) => {
           />
         </label>
         <label>
-          Fecha de Fallecimiento:
+          Pass Date:
           <input
             type="date"
             name="fecha_fallecimiento"
@@ -441,7 +440,7 @@ const manejarSubmit = useCallback(async (e) => {
           />
         </label>
         <label>
-          Lugar de Fallecimiento:
+          Pass Place:
           <input
             type="text"
             name="lugar_fallecimiento"
@@ -450,14 +449,14 @@ const manejarSubmit = useCallback(async (e) => {
           />
         </label>
         <button type="submit" disabled={cargando}>
-          {esEdicion ? 'Actualizar' : 'Crear'}
+          {esEdicion ? 'Update' : 'New'}
         </button>
         <button
           type="button"
           onClick={() => setVistaActual('listar')}
           disabled={cargando}
         >
-          Cancelar
+          Cancel
         </button>
       </form>
     </div>

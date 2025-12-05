@@ -1,13 +1,22 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* src/index.css o src/App.css o src/fonts.css */
+@font-face {
+  font-family: 'Beatles'; /* Elige un nombre único para identificar la fuente */
+  src: url('../public/fonts/BOOTLE__.TTF') format('truetype'); /* Ruta al archivo TTF */
+  font-weight: normal; /* Peso de la fuente (normal, bold, etc.) */
+  font-style: normal;  /* Estilo de la fuente (normal, italic, etc.) */
+
+  font-style: italic;
+  /* Puedes definir variantes para diferentes pesos o estilos si tienes esos archivos */
+  /*
+  font-weight: bold;
+  
+  */
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Opcional: Define la fuente como predeterminada para toda la aplicación */
+body {
+  margin: 0;
+  font-family: 'BOOTLE__', Arial, sans-serif; /* Prioriza tu fuente */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

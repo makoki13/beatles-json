@@ -43,7 +43,7 @@ const Canciones = () => {
               {canciones.map((cancion) => (
                 <tr key={cancion.id}>                  
                   <td style={{textAlign:"left"}}>{cancion.nombre}</td>
-                  <td style={{textAlign:"left"}}>{cancion.nombres_alternativos && cancion.nombres_alternativos.length > 0 ? canciones.nombres_alternativos.join(', ') : '-'}</td> {/* Muestra los nombres alternativos unidos por coma, o '-' si no hay */}
+                  <td style={{textAlign:"left"}}>{cancion.nombres_alternativos && cancion.nombres_alternativos.length > 0 ? canciones.nombres_alternativos.join(', ') : ''}</td> {/* Muestra los nombres alternativos unidos por coma, o '' si no hay */}
                   <td>{cancion.hay_grabacion ? 'Yes' : 'No'}</td>
                   <td>
                     <button
