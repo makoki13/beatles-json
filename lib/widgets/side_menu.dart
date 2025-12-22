@@ -17,9 +17,9 @@ class SideMenu extends StatelessWidget {
     switch (section) {
       case 'Personajes':
         menuOptions = [
-          {'title': 'Listado', 'action': 'Listado'},
-          {'title': 'Agregar', 'action': 'Agregar'},
-          {'title': 'Editar', 'action': 'Editar'},
+          {'title': 'Listado', 'action': 'List'},
+          {'title': 'Buscar', 'action': 'Search'},
+          {'title': 'Añadir', 'action': 'Add'},
         ];
         break;
       case 'Canciones':
@@ -92,7 +92,7 @@ class SideMenu extends StatelessWidget {
           {'title': 'Editar', 'action': 'Editar'},
         ];
         break;
-      case 'Discogr�ficas':
+      case 'Discográficas':
         menuOptions = [
           {'title': 'Listado', 'action': 'Listado'},
           {'title': 'Agregar', 'action': 'Agregar'},
@@ -125,15 +125,7 @@ class SideMenu extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              section,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Divider(height: 1),
+          Divider(height: 10),
           Expanded(
             child: ListView.builder(
               itemCount: menuOptions.length,
