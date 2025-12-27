@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String selectedSection = 'Personajes'; // Valor inicial
-  int selectedMenuItem = 0; // �ndice de 'Personajes' en el men� superior
+  int selectedMenuItem = 0; // Índice de 'Personajes' en el menú superior
   String selectedContent = 'Listado'; // Valor inicial para el contenido
 
   @override
@@ -20,22 +20,22 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Column(
         children: [
-          // Men� superior
+          // Menú superior
           MainMenu(
             onSectionChanged: (String section, int index) {
               setState(() {
                 selectedSection = section;
                 selectedMenuItem = index;
-                selectedContent = 'Listado'; // Reiniciar al cambiar secci�n
+                // No establecer selectedContent aquí, dejar que SideMenu maneje la selección del primer elemento
               });
             },
             currentIndex: selectedMenuItem,
           ),
-          // Cuerpo principal con men� lateral y �rea de contenido
+          // Cuerpo principal con menú lateral y área de contenido
           Expanded(
             child: Row(
               children: [
-                // Men� lateral izquierdo
+                // Menú lateral izquierdo
                 SideMenu(
                   section: selectedSection,
                   onContentChanged: (String content) {
@@ -43,8 +43,9 @@ class _HomePageState extends State<HomePage> {
                       selectedContent = content;
                     });
                   },
+                  activeAction: selectedContent,
                 ),
-                // �rea de contenido principal
+                // Área de contenido principal
                 Expanded(
                   child: ContentArea(
                     section: selectedSection,

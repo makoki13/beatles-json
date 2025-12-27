@@ -15,23 +15,23 @@ class Personaje {
     this.lugarFallecimiento,
   });
 
-  // Constructor desde JSON
+  // Constructor from JSON
   factory Personaje.fromJson(Map<String, dynamic> json) {
     return Personaje(
-      id: json['id'] ?? 0,
-      nombre: json['nombre'] ?? '',
-      fechaNacimiento: json['fecha_nacimiento'] != null
-          ? DateTime.parse(json['fecha_nacimiento'])
+      id: json['id'] as int,
+      nombre: json['nombre'] as String,
+      fechaNacimiento: json['fecha_nacimiento'] != null 
+          ? DateTime.parse(json['fecha_nacimiento'] as String) 
           : null,
-      lugarNacimiento: json['lugar_nacimiento'],
-      fechaFallecimiento: json['fecha_fallecimiento'] != null
-          ? DateTime.parse(json['fecha_fallecimiento'])
+      lugarNacimiento: json['lugar_nacimiento'] as String?,
+      fechaFallecimiento: json['fecha_fallecimiento'] != null 
+          ? DateTime.parse(json['fecha_fallecimiento'] as String) 
           : null,
-      lugarFallecimiento: json['lugar_fallecimiento'],
+      lugarFallecimiento: json['lugar_fallecimiento'] as String?,
     );
   }
 
-  // Método para convertir a JSON
+  // Method to convert to JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -41,17 +41,5 @@ class Personaje {
       'fecha_fallecimiento': fechaFallecimiento?.toIso8601String(),
       'lugar_fallecimiento': lugarFallecimiento,
     };
-  }
-
-  // Constructor para crear un nuevo personaje con valores por defecto
-  factory Personaje.nuevo() {
-    return Personaje(
-      id: 0,
-      nombre: '',
-      fechaNacimiento: null,
-      lugarNacimiento: null,
-      fechaFallecimiento: null,
-      lugarFallecimiento: null,
-    );
   }
 }
