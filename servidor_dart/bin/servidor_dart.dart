@@ -34,7 +34,7 @@ Future<void> main() async {
       .addMiddleware(corsHeaders())
       .addHandler(router);
 
-  final server = await io.serve(handler, '0.0.0.0', 8080);
+  final server = await io.serve(handler, '127.0.0.1', 8080);
   print('🚀 Servidor listo en http://${server.address.host}:${server.port}');
 }
 

@@ -1,7 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:beatles_json/models/personaje.dart';
-import 'package:http/http.dart' as http;
+import 'package:beatles_json/repositories/personajes_repository.dart';
 
 class PersonajesListadoPage extends StatefulWidget {
   const PersonajesListadoPage({super.key});
@@ -27,39 +26,18 @@ class _PersonajesListadoPageState extends State<PersonajesListadoPage> {
   }
 
   Future<void> _loadPersonajes() async {
-    // Server URL - use 10.0.2.2 for Android emulator to reach localhost
-    // For iOS simulator, use localhost
-    // For real devices, use your computer's IP address on the same network
-    String serverUrl = 'http://10.0.2.2:8080/personajes'; // Default for Android emulator
-
     try {
-      final response = await http.get(
-        Uri.parse(serverUrl),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        final List<Personaje> fetchedPersonajes = data.map((json) => Personaje.fromJson(json)).toList();
-
-        if (mounted) {
-          setState(() {
-            personajes = fetchedPersonajes;
-            isLoading = false;
-          });
-        }
-      } else {
-        if (mounted) {
-          setState(() {
-            errorMessage = 'Error al cargar los personajes: ${response.statusCode}';
-            isLoading = false;
-          });
-        }
+      final data = await PersonajesRepository.getAllPersonajes();
+      if (mounted) {
+        setState(() {
+          personajes = data;
+          isLoading = false;
+        });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          errorMessage = 'Error de conexión al servidor: $e';
+          errorMessage = 'Error al cargar los personajes: $e';
           isLoading = false;
         });
       }

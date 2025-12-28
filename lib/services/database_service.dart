@@ -1,9 +1,19 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class DatabaseService {
   // Base URL for your API server
-  static const String _baseUrl = 'http://localhost:8080'; // Replace with your API server URL
+  // Use different URLs depending on the platform
+  static String get _baseUrl {
+    if (kIsWeb) {
+      // For web, use localhost
+      return 'http://localhost:8080';
+    } else {
+      // For mobile, use 10.0.2.2 for Android emulator to reach host machine
+      return 'http://10.0.2.2:8080';
+    }
+  }
 
   // Get all personajes
   static Future<List<Map<String, dynamic>>> getAllPersonajes() async {
@@ -68,7 +78,10 @@ class DatabaseService {
   }
 
   // Update an existing personaje
-  static Future<bool> updatePersonaje(int id, Map<String, dynamic> personajeData) async {
+  static Future<bool> updatePersonaje(
+    int id,
+    Map<String, dynamic> personajeData,
+  ) async {
     try {
       final response = await http.put(
         Uri.parse('$_baseUrl/personajes/$id'),
