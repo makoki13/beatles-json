@@ -1,3 +1,6 @@
+servidor_dart>dart run
+flutter run -d chrome
+
 # beatles_json
 
 A new Flutter project.
