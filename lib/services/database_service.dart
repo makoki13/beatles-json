@@ -1,131 +1,100 @@
-// ignore_for_file: avoid_print
-
-import 'dart:async';
-import 'package:postgres/postgres.dart';
-import '../models/personaje.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class DatabaseService {
-  late Connection _connection;
+  // Base URL for your API server
+  static const String _baseUrl = 'http://localhost:8080'; // Replace with your API server URL
 
-  static const String _host = 'localhost';
-  static const int _port = 5432;
-  static const String _databaseName = 'beatles';
-  static const String _username = 'postgres';
-  static const String _password = 'J0P4G3R1#beatles';
-
-  Future<void> connect() async {
+  // Get all personajes
+  static Future<List<Map<String, dynamic>>> getAllPersonajes() async {
     try {
-      _connection = await Connection.open(
-        Endpoint(
-          host: _host,
-          port: _port,
-          database: _databaseName,
-          username: _username,
-          password: _password,
-        ),
-      );
-      print('Conexión a la base de datos establecida exitosamente');
-    } catch (e) {
-      print('Error al conectar a la base de datos: $e');
-      rethrow;
-    }
-  }
-
-  Future<void> disconnect() async {
-    await _connection.close();
-  }
-
-  // Métodos para la tabla personajes
-  Future<List<Personaje>> getAllPersonajes() async {
-    try {
-      final results = await _connection.execute(
-        'SELECT * FROM personajes ORDER BY nombre',
+      final response = await http.get(
+        Uri.parse('$_baseUrl/personajes'),
+        headers: {'Content-Type': 'application/json'},
       );
 
-      return results.map((row) => _mapRowToPersonaje(row)).toList();
-    } catch (e) {
-      print('Error al obtener personajes: $e');
-      rethrow;
-    }
-  }
-
-  Future<Personaje?> getPersonajeById(int id) async {
-    try {
-      final results = await _connection.execute(
-        'SELECT * FROM personajes WHERE id = $id',
-      );
-
-      if (results.isNotEmpty) {
-        return _mapRowToPersonaje(results.first);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.cast<Map<String, dynamic>>();
+      } else {
+        throw Exception('Failed to load personajes: ${response.statusCode}');
       }
-      return null;
     } catch (e) {
-      print('Error al obtener personaje por ID: $e');
+      print('Error fetching personajes: $e');
       rethrow;
     }
   }
 
-  Future<int> insertPersonaje(Personaje personaje) async {
+  // Get personaje by ID
+  static Future<Map<String, dynamic>?> getPersonajeById(int id) async {
     try {
-      final results = await _connection.execute('''INSERT INTO personajes (
-            nombre, 
-            fecha_nacimiento, 
-            lugar_nacimiento, 
-            fecha_fallecimiento, 
-            lugar_fallecimiento
-          ) 
-          VALUES (
-            '$personaje.nombre', 
-           '$personaje.fechaNacimiento?.toIso8601String()', 
-           $personaje.lugarNacimiento, 
-           $personaje.fechaFallecimiento?.toIso8601String(), 
-           $personaje.lugarFallecimiento
-          ) 
-          RETURNING id''');
-
-      final row = results.first;
-      return row[0] as int;
-    } catch (e) {
-      print('Error al insertar personaje: $e');
-      rethrow;
-    }
-  }
-
-  Future<void> updatePersonaje(Personaje personaje) async {
-    try {
-      await _connection.execute(
-        '''UPDATE personajes SET 
-           nombre = '$personaje.nombre', 
-           fecha_nacimiento = '$personaje.fechaNacimiento?.toIso8601String()', 
-           lugar_nacimiento = '$personaje.lugarNacimiento', 
-           fecha_fallecimiento = '$personaje.fechaFallecimiento?.toIso8601String()', 
-           lugar_fallecimiento = '$personaje.lugarFallecimiento' 
-           WHERE id = @id'''
+      final response = await http.get(
+        Uri.parse('$_baseUrl/personajes/$id'),
+        headers: {'Content-Type': 'application/json'},
       );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else if (response.statusCode == 404) {
+        return null; // Personaje not found
+      } else {
+        throw Exception('Failed to load personaje: ${response.statusCode}');
+      }
     } catch (e) {
-      print('Error al actualizar personaje: $e');
+      print('Error fetching personaje: $e');
       rethrow;
     }
   }
 
-  Future<void> deletePersonaje(int id) async {
+  // Create a new personaje
+  static Future<int> createPersonaje(Map<String, dynamic> personajeData) async {
     try {
-      await _connection.execute('DELETE FROM personajes WHERE id = $id');
+      final response = await http.post(
+        Uri.parse('$_baseUrl/personajes'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(personajeData),
+      );
+
+      if (response.statusCode == 201) {
+        final createdPersonaje = json.decode(response.body);
+        return createdPersonaje['id'];
+      } else {
+        throw Exception('Failed to create personaje: ${response.statusCode}');
+      }
     } catch (e) {
-      print('Error al eliminar personaje: $e');
+      print('Error creating personaje: $e');
       rethrow;
     }
   }
 
-  // Método auxiliar para convertir fila de PostgreSQL a Personaje
-  Personaje _mapRowToPersonaje(ResultRow row) {
-    return Personaje.fromJson({
-      'id': row[0],
-      'nombre': row[1],
-      'fecha_nacimiento': row[2],
-      'lugar_nacimiento': row[3],
-      'fecha_fallecimiento': row[4],
-      'lugar_fllecimiento': row[5],
-    });
+  // Update an existing personaje
+  static Future<bool> updatePersonaje(int id, Map<String, dynamic> personajeData) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$_baseUrl/personajes/$id'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(personajeData),
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error updating personaje: $e');
+      rethrow;
+    }
+  }
+
+  // Delete a personaje
+  static Future<bool> deletePersonaje(int id) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$_baseUrl/personajes/$id'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error deleting personaje: $e');
+      rethrow;
+    }
   }
 }

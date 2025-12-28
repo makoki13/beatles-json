@@ -1,0 +1,52 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "beatles_json",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "beatles_json (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "beatles_json (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "servidor_dart",
+            "cwd": "servidor_dart",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "temp_package",
+            "cwd": "temp_package",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "temp_package (profile mode)",
+            "cwd": "temp_package",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "temp_package (release mode)",
+            "cwd": "temp_package",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
