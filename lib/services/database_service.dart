@@ -65,6 +65,8 @@ class DatabaseService {
         body: json.encode(personajeData),
       );
 
+      print("PersonajeData: " + personajeData.toString());
+
       if (response.statusCode == 201) {
         final createdPersonaje = json.decode(response.body);
         return createdPersonaje['id'];
@@ -107,6 +109,77 @@ class DatabaseService {
       return response.statusCode == 200;
     } catch (e) {
       print('Error deleting personaje: $e');
+      rethrow;
+    }
+  }
+
+  // Search personajes with filters
+  static Future<List<Map<String, dynamic>>> searchPersonajes({
+    String? nombre,
+    String? lugarNacimiento,
+    String? lugarFallecimiento,
+    DateTime? fechaNacimientoDesde,
+    DateTime? fechaNacimientoHasta,
+    DateTime? fechaFallecimientoDesde,
+    DateTime? fechaFallecimientoHasta,
+    bool? estaVivo,
+  }) async {
+    try {
+      // Build query parameters
+      Map<String, String> queryParams = {};
+
+      if (nombre != null && nombre.isNotEmpty) {
+        queryParams['nombre'] = nombre;
+      }
+      if (lugarNacimiento != null && lugarNacimiento.isNotEmpty) {
+        queryParams['lugar_nacimiento'] = lugarNacimiento;
+      }
+      if (lugarFallecimiento != null && lugarFallecimiento.isNotEmpty) {
+        queryParams['lugar_fallecimiento'] = lugarFallecimiento;
+      }
+      if (fechaNacimientoDesde != null) {
+        queryParams['fecha_nacimiento_desde'] = fechaNacimientoDesde
+            .toIso8601String()
+            .split('T')[0];
+      }
+      if (fechaNacimientoHasta != null) {
+        queryParams['fecha_nacimiento_hasta'] = fechaNacimientoHasta
+            .toIso8601String()
+            .split('T')[0];
+      }
+      if (fechaFallecimientoDesde != null) {
+        queryParams['fecha_fallecimiento_desde'] = fechaFallecimientoDesde
+            .toIso8601String()
+            .split('T')[0];
+      }
+      if (fechaFallecimientoHasta != null) {
+        queryParams['fecha_fallecimiento_hasta'] = fechaFallecimientoHasta
+            .toIso8601String()
+            .split('T')[0];
+      }
+      if (estaVivo != null) {
+        queryParams['esta_vivo'] = estaVivo.toString();
+      }
+
+      String queryString = Uri(queryParameters: queryParams).query;
+      String url = '$_baseUrl/personajes/buscar';
+      if (queryString.isNotEmpty) {
+        url += '?$queryString';
+      }
+
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.cast<Map<String, dynamic>>();
+      } else {
+        throw Exception('Failed to search personajes: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error searching personajes: $e');
       rethrow;
     }
   }

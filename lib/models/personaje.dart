@@ -20,15 +20,22 @@ class Personaje {
     return Personaje(
       id: json['id'] as int,
       nombre: json['nombre'] as String,
-      fechaNacimiento: json['fecha_nacimiento'] != null 
-          ? DateTime.parse(json['fecha_nacimiento'] as String) 
+      fechaNacimiento: json['fecha_nacimiento'] != null
+          ? DateTime.parse(json['fecha_nacimiento'] as String)
           : null,
-      lugarNacimiento: json['lugar_nacimiento'] as String?,
-      fechaFallecimiento: json['fecha_fallecimiento'] != null 
-          ? DateTime.parse(json['fecha_fallecimiento'] as String) 
+      lugarNacimiento: _getStringOrNull(json['lugar_nacimiento']),
+      fechaFallecimiento: json['fecha_fallecimiento'] != null
+          ? DateTime.parse(json['fecha_fallecimiento'] as String)
           : null,
-      lugarFallecimiento: json['lugar_fallecimiento'] as String?,
+      lugarFallecimiento: _getStringOrNull(json['lugar_fallecimiento']),
     );
+  }
+
+  // Helper method to convert empty strings to null
+  static String? _getStringOrNull(dynamic value) {
+    if (value == null) return null;
+    if (value is String && value.trim().isEmpty) return null;
+    return value.toString().trim();
   }
 
   // Method to convert to JSON
@@ -37,9 +44,9 @@ class Personaje {
       'id': id,
       'nombre': nombre,
       'fecha_nacimiento': fechaNacimiento?.toIso8601String(),
-      'lugar_nacimiento': lugarNacimiento,
+      'lugar_nacimiento': lugarNacimiento != null && lugarNacimiento!.trim().isEmpty ? null : lugarNacimiento,
       'fecha_fallecimiento': fechaFallecimiento?.toIso8601String(),
-      'lugar_fallecimiento': lugarFallecimiento,
+      'lugar_fallecimiento': lugarFallecimiento != null && lugarFallecimiento!.trim().isEmpty ? null : lugarFallecimiento,
     };
   }
 }

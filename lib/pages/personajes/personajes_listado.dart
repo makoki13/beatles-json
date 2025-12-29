@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:beatles_json/models/personaje.dart';
 import 'package:beatles_json/repositories/personajes_repository.dart';
+import 'package:beatles_json/components/personajes_table.dart';
 
 class PersonajesListadoPage extends StatefulWidget {
   const PersonajesListadoPage({super.key});
@@ -95,86 +96,11 @@ class _PersonajesListadoPageState extends State<PersonajesListadoPage> {
         backgroundColor: Colors.blue[600],
         foregroundColor: Colors.white,
       ),
-      body: personajes.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.person, size: 64, color: Colors.blue[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    "No hay personajes registrados",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Agregue personajes para verlos aquí',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                  ),
-                ],
-              ),
-            )
-          : ListView.builder(
-              itemCount: personajes.length,
-              itemBuilder: (context, index) {
-                final personaje = personajes[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(16),
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.blue[100],
-                      child: Text(
-                        personaje.nombre.substring(0, 1).toUpperCase(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ),
-                    title: Text(
-                      personaje.nombre,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (personaje.fechaNacimiento != null)
-                          Text(
-                            'Nacimiento: ${_formatDate(personaje.fechaNacimiento!)}',
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        if (personaje.lugarNacimiento != null &&
-                            personaje.lugarNacimiento!.isNotEmpty)
-                          Text(
-                            'Lugar: ${personaje.lugarNacimiento}',
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        if (personaje.fechaFallecimiento != null)
-                          Text(
-                            'Fallecimiento: ${_formatDate(personaje.fechaFallecimiento!)}',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.red,
-                            ),
-                          ),
-                      ],
-                    ),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  ),
-                );
-              },
-            ),
+      body: PersonajesTable(
+        personajes: personajes,
+        isLoading: isLoading,
+        errorMessage: errorMessage,
+      ),
     );
   }
 
