@@ -3,20 +3,50 @@ import 'package:beatles_json/models/personaje.dart';
 import 'package:beatles_json/repositories/personajes_repository.dart';
 
 class PersonajesAddPage extends StatefulWidget {
+  final Personaje? personaje; // Parámetro opcional para edición
+
+  const PersonajesAddPage({Key? key, this.personaje}) : super(key: key);
+
   @override
   _PersonajesAddPageState createState() => _PersonajesAddPageState();
 }
 
 class _PersonajesAddPageState extends State<PersonajesAddPage> {
   final _formKey = GlobalKey<FormState>();
-  final _nombreController = TextEditingController();
-  final _lugarNacimientoController = TextEditingController();
-  final _lugarFallecimientoController = TextEditingController();
+  late final TextEditingController _nombreController;
+  late final TextEditingController _lugarNacimientoController;
+  late final TextEditingController _lugarFallecimientoController;
 
   DateTime? _fechaNacimiento;
   DateTime? _fechaFallecimiento;
 
   bool _isLoading = false;
+  late bool _isEditing; // Indicador para saber si estamos editando
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Determinar si estamos en modo edición
+    _isEditing = widget.personaje != null;
+    
+    // Inicializar controladores con valores existentes si estamos editando
+    _nombreController = TextEditingController(
+      text: _isEditing ? widget.personaje!.nombre : '',
+    );
+    _lugarNacimientoController = TextEditingController(
+      text: _isEditing ? widget.personaje!.lugarNacimiento ?? '' : '',
+    );
+    _lugarFallecimientoController = TextEditingController(
+      text: _isEditing ? widget.personaje!.lugarFallecimiento ?? '' : '',
+    );
+    
+    // Inicializar fechas si estamos editando
+    if (_isEditing) {
+      _fechaNacimiento = widget.personaje!.fechaNacimiento;
+      _fechaFallecimiento = widget.personaje!.fechaFallecimiento;
+    }
+  }
 
   @override
   void dispose() {
@@ -62,7 +92,7 @@ class _PersonajesAddPageState extends State<PersonajesAddPage> {
 
       try {
         final personaje = Personaje(
-          id: 0, // El ID será asignado por la base de datos
+          id: _isEditing ? widget.personaje!.id : 0, // Mantener ID si estamos editando
           nombre: _nombreController.text.trim(),
           fechaNacimiento: _fechaNacimiento,
           lugarNacimiento: _lugarNacimientoController.text.trim().isEmpty ? null : _lugarNacimientoController.text.trim(),
@@ -70,7 +100,13 @@ class _PersonajesAddPageState extends State<PersonajesAddPage> {
           lugarFallecimiento: _lugarFallecimientoController.text.trim().isEmpty ? null : _lugarFallecimientoController.text.trim(),
         );
 
-        await PersonajesRepository.createPersonaje(personaje);
+        if (_isEditing) {
+          // Actualizar personaje existente
+          await PersonajesRepository.updatePersonaje(personaje);
+        } else {
+          // Crear nuevo personaje
+          await PersonajesRepository.createPersonaje(personaje);
+        }
 
         if (mounted) {
           setState(() {
@@ -79,14 +115,16 @@ class _PersonajesAddPageState extends State<PersonajesAddPage> {
 
           // Mostrar mensaje de éxito
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Personaje agregado exitosamente'),
+            SnackBar(
+              content: Text(_isEditing 
+                ? 'Personaje actualizado exitosamente' 
+                : 'Personaje agregado exitosamente'),
               backgroundColor: Colors.green,
             ),
           );
 
-          // Limpiar el formulario
-          _resetForm();
+          // Regresar a la página anterior con indicador de éxito
+          Navigator.of(context).pop(true);
         }
       } catch (e) {
         if (mounted) {
@@ -97,7 +135,9 @@ class _PersonajesAddPageState extends State<PersonajesAddPage> {
           // Mostrar mensaje de error
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error al agregar personaje: $e'),
+              content: Text(_isEditing 
+                ? 'Error al actualizar personaje: $e' 
+                : 'Error al agregar personaje: $e'),
               backgroundColor: Colors.red,
             ),
           );
@@ -121,7 +161,7 @@ class _PersonajesAddPageState extends State<PersonajesAddPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agregar Personaje'),
+        title: Text(_isEditing ? 'Editar Personaje' : 'Agregar Personaje'),
         backgroundColor: Colors.blue[600],
         foregroundColor: Colors.white,
       ),
@@ -227,29 +267,31 @@ class _PersonajesAddPageState extends State<PersonajesAddPage> {
                     ),
                     child: _isLoading
                         ? const CircularProgressIndicator()
-                        : const Text(
-                            'Agregar Personaje',
-                            style: TextStyle(fontSize: 16),
+                        : Text(
+                            _isEditing ? 'Actualizar Personaje' : 'Agregar Personaje',
+                            style: const TextStyle(fontSize: 16),
                           ),
                   ),
                 ),
 
                 // Botón para limpiar formulario
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: OutlinedButton(
-                    onPressed: _isLoading ? null : _resetForm,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
-                    ),
-                    child: const Text(
-                      'Limpiar Formulario',
-                      style: TextStyle(fontSize: 16),
+                if (!_isEditing) ...[
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: OutlinedButton(
+                      onPressed: _isLoading ? null : _resetForm,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                      ),
+                      child: const Text(
+                        'Limpiar Formulario',
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

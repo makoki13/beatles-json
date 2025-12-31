@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:beatles_json/components/personajes_table.dart';
 import 'package:beatles_json/models/personaje.dart';
 import 'package:beatles_json/repositories/personajes_repository.dart';
+import 'package:beatles_json/pages/personajes/personajes_add.dart';
 
 class PersonajesBuscarPage extends StatefulWidget {
   @override
@@ -12,16 +13,15 @@ class _PersonajesBuscarPageState extends State<PersonajesBuscarPage> {
   final TextEditingController _nombreController = TextEditingController();
   final TextEditingController _lugarNacimientoController = TextEditingController();
   final TextEditingController _lugarFallecimientoController = TextEditingController();
-  DateTime? _fechaNacimientoDesde;
-  DateTime? _fechaNacimientoHasta;
-  DateTime? _fechaFallecimientoDesde;
-  DateTime? _fechaFallecimientoHasta;
+  DateTime? _fechaNacimiento;
+  DateTime? _fechaFallecimiento;
   bool _estaVivo = false;
 
   List<Personaje> _resultadosBusqueda = [];
   bool _isLoading = false;
   String? _errorMessage;
   bool _mostrarResultados = false;
+  Personaje? _selectedPersonaje; // Personaje seleccionado para editar/eliminar
 
   @override
   void dispose() {
@@ -31,6 +31,80 @@ class _PersonajesBuscarPageState extends State<PersonajesBuscarPage> {
     super.dispose();
   }
 
+  Future<void> _editarPersonaje(Personaje personaje) async {
+    // Navegar a la página de edición con los datos del personaje
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PersonajesAddPage(
+          personaje: personaje, // Pasar el personaje para edición
+        ),
+      ),
+    );
+
+    // Si se actualizó el personaje, recargar la búsqueda
+    if (result == true) {
+      _realizarBusqueda();
+    }
+  }
+
+  Future<void> _eliminarPersonaje(Personaje personaje) async {
+    bool confirmado = await _mostrarDialogoConfirmacion(context, personaje.nombre);
+    if (confirmado) {
+      try {
+        bool success = await PersonajesRepository.deletePersonaje(personaje.id);
+        if (success) {
+          if (mounted) {
+            setState(() {
+              _resultadosBusqueda.removeWhere((p) => p.id == personaje.id);
+              _selectedPersonaje = null; // Limpiar selección
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Personaje "${personaje.nombre}" eliminado correctamente'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        } else {
+          throw Exception('No se pudo eliminar el personaje');
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error al eliminar el personaje: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  Future<bool> _mostrarDialogoConfirmacion(BuildContext context, String nombre) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmar eliminación'),
+          content: Text('¿Estás seguro de que deseas eliminar a "$nombre"?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text('Eliminar'),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+            ),
+          ],
+        );
+      },
+    ) ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +112,29 @@ class _PersonajesBuscarPageState extends State<PersonajesBuscarPage> {
         title: Text('Buscar Personajes'),
         backgroundColor: Colors.blue[600],
         foregroundColor: Colors.white,
+        actions: [
+          // Botón para editar el personaje seleccionado
+          IconButton(
+            icon: Icon(Icons.edit, color: Colors.white),
+            onPressed: _selectedPersonaje != null 
+              ? () => _editarPersonaje(_selectedPersonaje!)
+              : null,
+            tooltip: 'Editar personaje seleccionado',
+          ),
+          // Botón para eliminar el personaje seleccionado
+          IconButton(
+            icon: Icon(Icons.delete, color: Colors.white),
+            onPressed: _selectedPersonaje != null 
+              ? () async {
+                  bool confirmado = await _mostrarDialogoConfirmacion(context, _selectedPersonaje!.nombre);
+                  if (confirmado) {
+                    _eliminarPersonaje(_selectedPersonaje!);
+                  }
+                }
+              : null,
+            tooltip: 'Eliminar personaje seleccionado',
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -87,79 +184,43 @@ class _PersonajesBuscarPageState extends State<PersonajesBuscarPage> {
               ),
               SizedBox(height: 16),
 
-              // Selector de rango de fechas de nacimiento
+              // Selector de fecha de nacimiento
               Text(
-                'Rango de Fechas de Nacimiento',
+                'Fecha de Nacimiento',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
               ),
               SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton.icon(
-                      onPressed: () => _selectDate(context, 'desde_nacimiento'),
-                      icon: Icon(Icons.date_range),
-                      label: Text(
-                        _fechaNacimientoDesde != null
-                            ? 'Desde: ${_formatDate(_fechaNacimientoDesde!)}'
-                            : 'Fecha Desde',
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: TextButton.icon(
-                      onPressed: () => _selectDate(context, 'hasta_nacimiento'),
-                      icon: Icon(Icons.date_range),
-                      label: Text(
-                        _fechaNacimientoHasta != null
-                            ? 'Hasta: ${_formatDate(_fechaNacimientoHasta!)}'
-                            : 'Fecha Hasta',
-                      ),
-                    ),
-                  ),
-                ],
+              TextButton.icon(
+                onPressed: () => _selectDate(context, 'nacimiento'),
+                icon: Icon(Icons.date_range),
+                label: Text(
+                  _fechaNacimiento != null
+                      ? 'Fecha: ${_formatDate(_fechaNacimiento!)}'
+                      : 'Seleccionar Fecha de Nacimiento',
+                ),
               ),
               SizedBox(height: 16),
 
-              // Selector de rango de fechas de fallecimiento
+              // Selector de fecha de fallecimiento
               Text(
-                'Rango de Fechas de Fallecimiento',
+                'Fecha de Fallecimiento',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
               ),
               SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton.icon(
-                      onPressed: () => _selectDate(context, 'desde_fallecimiento'),
-                      icon: Icon(Icons.date_range),
-                      label: Text(
-                        _fechaFallecimientoDesde != null
-                            ? 'Desde: ${_formatDate(_fechaFallecimientoDesde!)}'
-                            : 'Fecha Desde',
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: TextButton.icon(
-                      onPressed: () => _selectDate(context, 'hasta_fallecimiento'),
-                      icon: Icon(Icons.date_range),
-                      label: Text(
-                        _fechaFallecimientoHasta != null
-                            ? 'Hasta: ${_formatDate(_fechaFallecimientoHasta!)}'
-                            : 'Fecha Hasta',
-                      ),
-                    ),
-                  ),
-                ],
+              TextButton.icon(
+                onPressed: () => _selectDate(context, 'fallecimiento'),
+                icon: Icon(Icons.date_range),
+                label: Text(
+                  _fechaFallecimiento != null
+                      ? 'Fecha: ${_formatDate(_fechaFallecimiento!)}'
+                      : 'Seleccionar Fecha de Fallecimiento',
+                ),
               ),
               SizedBox(height: 16),
 
@@ -241,6 +302,11 @@ class _PersonajesBuscarPageState extends State<PersonajesBuscarPage> {
                         personajes: _resultadosBusqueda,
                         isLoading: _isLoading,
                         errorMessage: _errorMessage,
+                        onPersonajeSelected: (personaje) {
+                          setState(() {
+                            _selectedPersonaje = personaje;
+                          });
+                        },
                       ),
                     ],
                   ),
@@ -263,17 +329,11 @@ class _PersonajesBuscarPageState extends State<PersonajesBuscarPage> {
     if (picked != null) {
       setState(() {
         switch (tipo) {
-          case 'desde_nacimiento':
-            _fechaNacimientoDesde = picked;
+          case 'nacimiento':
+            _fechaNacimiento = picked;
             break;
-          case 'hasta_nacimiento':
-            _fechaNacimientoHasta = picked;
-            break;
-          case 'desde_fallecimiento':
-            _fechaFallecimientoDesde = picked;
-            break;
-          case 'hasta_fallecimiento':
-            _fechaFallecimientoHasta = picked;
+          case 'fallecimiento':
+            _fechaFallecimiento = picked;
             break;
         }
       });
@@ -289,6 +349,7 @@ class _PersonajesBuscarPageState extends State<PersonajesBuscarPage> {
       _isLoading = true;
       _errorMessage = null;
       _mostrarResultados = true;
+      _selectedPersonaje = null; // Limpiar selección al realizar nueva búsqueda
     });
 
     try {
@@ -296,10 +357,8 @@ class _PersonajesBuscarPageState extends State<PersonajesBuscarPage> {
         nombre: _nombreController.text.trim().isNotEmpty ? _nombreController.text.trim() : null,
         lugarNacimiento: _lugarNacimientoController.text.trim().isNotEmpty ? _lugarNacimientoController.text.trim() : null,
         lugarFallecimiento: _lugarFallecimientoController.text.trim().isNotEmpty ? _lugarFallecimientoController.text.trim() : null,
-        fechaNacimientoDesde: _fechaNacimientoDesde,
-        fechaNacimientoHasta: _fechaNacimientoHasta,
-        fechaFallecimientoDesde: _fechaFallecimientoDesde,
-        fechaFallecimientoHasta: _fechaFallecimientoHasta,
+        fechaNacimiento: _fechaNacimiento,
+        fechaFallecimiento: _fechaFallecimiento,
         estaVivo: _estaVivo,
       );
 
@@ -324,11 +383,10 @@ class _PersonajesBuscarPageState extends State<PersonajesBuscarPage> {
       _nombreController.clear();
       _lugarNacimientoController.clear();
       _lugarFallecimientoController.clear();
-      _fechaNacimientoDesde = null;
-      _fechaNacimientoHasta = null;
-      _fechaFallecimientoDesde = null;
-      _fechaFallecimientoHasta = null;
+      _fechaNacimiento = null;
+      _fechaFallecimiento = null;
       _estaVivo = false;
+      _selectedPersonaje = null; // Limpiar selección al limpiar filtros
     });
   }
 }

@@ -5,12 +5,14 @@ class PersonajesTable extends StatelessWidget {
   final List<Personaje> personajes;
   final bool isLoading;
   final String? errorMessage;
+  final Function(Personaje)? onPersonajeSelected; // Callback para cuando se selecciona un personaje
 
   const PersonajesTable({
     Key? key,
     required this.personajes,
     this.isLoading = false,
     this.errorMessage,
+    this.onPersonajeSelected,
   }) : super(key: key);
 
   @override
@@ -94,6 +96,15 @@ class PersonajesTable extends StatelessWidget {
         ],
         rows: personajes.map((personaje) {
           return DataRow(
+            selected: false, // No seleccionar filas por defecto
+            onSelectChanged: (selected) {
+              if (selected == true) {
+                // Llamar al callback cuando se selecciona un personaje
+                if (onPersonajeSelected != null) {
+                  onPersonajeSelected!(personaje);
+                }
+              }
+            },
             cells: [
               DataCell(Text(personaje.nombre)),
               DataCell(

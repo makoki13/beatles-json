@@ -87,7 +87,8 @@ Future<Response> _crearPersonaje(Request req) async {
     final jsonData = jsonDecode(body);
 
     // Validate required fields
-    if (jsonData['nombre'] == null || jsonData['nombre'].toString().trim().isEmpty) {
+    if (jsonData['nombre'] == null ||
+        jsonData['nombre'].toString().trim().isEmpty) {
       return Response.badRequest(
         body: jsonEncode({'error': 'El nombre es requerido'}),
       );
@@ -96,37 +97,57 @@ Future<Response> _crearPersonaje(Request req) async {
     // Prepare the query and parameters
     String query = '''
       INSERT INTO personajes (nombre, fecha_nacimiento, lugar_nacimiento, fecha_fallecimiento, lugar_fallecimiento)
-      VALUES (\$1, \$2, \$3, \$4, \$5)
+      VALUES (@1, @2, @3, @4, @5)
       RETURNING id;
     ''';
 
     List<dynamic> parameters = [
       jsonData['nombre'].toString().trim(),
-      jsonData['fecha_nacimiento'] != null && jsonData['fecha_nacimiento'].toString().isNotEmpty
-        ? DateTime.parse(jsonData['fecha_nacimiento'].toString())
-        : null,
-      jsonData['lugar_nacimiento'] != null && jsonData['lugar_nacimiento'].toString().trim().isNotEmpty
-        ? jsonData['lugar_nacimiento'].toString().trim()
-        : null,
-      jsonData['fecha_fallecimiento'] != null && jsonData['fecha_fallecimiento'].toString().isNotEmpty
-        ? DateTime.parse(jsonData['fecha_fallecimiento'].toString())
-        : null,
-      jsonData['lugar_fallecimiento'] != null && jsonData['lugar_fallecimiento'].toString().trim().isNotEmpty
-        ? jsonData['lugar_fallecimiento'].toString().trim()
-        : null,
+      jsonData['fecha_nacimiento'] != null &&
+              jsonData['fecha_nacimiento'].toString().isNotEmpty
+          ? DateTime.parse(jsonData['fecha_nacimiento'].toString())
+          : null,
+      jsonData['lugar_nacimiento'] != null &&
+              jsonData['lugar_nacimiento'].toString().trim().isNotEmpty
+          ? jsonData['lugar_nacimiento'].toString().trim()
+          : null,
+      jsonData['fecha_fallecimiento'] != null &&
+              jsonData['fecha_fallecimiento'].toString().isNotEmpty
+          ? DateTime.parse(jsonData['fecha_fallecimiento'].toString())
+          : null,
+      jsonData['lugar_fallecimiento'] != null &&
+              jsonData['lugar_fallecimiento'].toString().trim().isNotEmpty
+          ? jsonData['lugar_fallecimiento'].toString().trim()
+          : null,
     ];
+
+    print('parameters length: ${parameters.length}');
+    print('parameters: $parameters');
+    print('query: $query');
+
+    // Create substitution values map for named parameters
+    Map<String, dynamic> substitutionValues = {
+      '1': parameters[0],
+      '2': parameters[1],
+      '3': parameters[2],
+      '4': parameters[3],
+      '5': parameters[4],
+    };
+
+    print('substitutionValues: $substitutionValues');
 
     final resultados = await conexion.query(
       query,
-      substitutionValues: {
-        for (int i = 0; i < parameters.length; i++) '${i + 1}': parameters[i],
-      },
+      substitutionValues: substitutionValues,
     );
+
+    print('resultados: $resultados');
 
     if (resultados.isNotEmpty) {
       final nuevoId = resultados.first[0] as int;
 
-      return Response(201,
+      return Response(
+        201,
         headers: {'Content-Type': 'application/json; charset=utf-8'},
         body: jsonEncode({'id': nuevoId}),
       );
@@ -169,7 +190,9 @@ Future<Response> _obtenerPersonajePorId(Request req, String id) async {
         headers: {'Content-Type': 'application/json; charset=utf-8'},
       );
     } else {
-      return Response.notFound(jsonEncode({'error': 'Personaje no encontrado'}));
+      return Response.notFound(
+        jsonEncode({'error': 'Personaje no encontrado'}),
+      );
     }
   } catch (e, stack) {
     print('❌ Error al obtener personaje por ID: $e\nStack: $stack');
@@ -196,7 +219,8 @@ Future<Response> _actualizarPersonaje(Request req, String id) async {
     }
 
     if (jsonData.containsKey('fecha_nacimiento')) {
-      if (jsonData['fecha_nacimiento'] != null && jsonData['fecha_nacimiento'].toString().isNotEmpty) {
+      if (jsonData['fecha_nacimiento'] != null &&
+          jsonData['fecha_nacimiento'].toString().isNotEmpty) {
         setParts.add('fecha_nacimiento = \$${paramIndex}');
         parameters.add(DateTime.parse(jsonData['fecha_nacimiento'].toString()));
       } else {
@@ -206,7 +230,8 @@ Future<Response> _actualizarPersonaje(Request req, String id) async {
     }
 
     if (jsonData.containsKey('lugar_nacimiento')) {
-      if (jsonData['lugar_nacimiento'] != null && jsonData['lugar_nacimiento'].toString().trim().isNotEmpty) {
+      if (jsonData['lugar_nacimiento'] != null &&
+          jsonData['lugar_nacimiento'].toString().trim().isNotEmpty) {
         setParts.add('lugar_nacimiento = \$${paramIndex}');
         parameters.add(jsonData['lugar_nacimiento'].toString().trim());
       } else {
@@ -216,9 +241,12 @@ Future<Response> _actualizarPersonaje(Request req, String id) async {
     }
 
     if (jsonData.containsKey('fecha_fallecimiento')) {
-      if (jsonData['fecha_fallecimiento'] != null && jsonData['fecha_fallecimiento'].toString().isNotEmpty) {
+      if (jsonData['fecha_fallecimiento'] != null &&
+          jsonData['fecha_fallecimiento'].toString().isNotEmpty) {
         setParts.add('fecha_fallecimiento = \$${paramIndex}');
-        parameters.add(DateTime.parse(jsonData['fecha_fallecimiento'].toString()));
+        parameters.add(
+          DateTime.parse(jsonData['fecha_fallecimiento'].toString()),
+        );
       } else {
         setParts.add('fecha_fallecimiento = NULL');
       }
@@ -226,7 +254,8 @@ Future<Response> _actualizarPersonaje(Request req, String id) async {
     }
 
     if (jsonData.containsKey('lugar_fallecimiento')) {
-      if (jsonData['lugar_fallecimiento'] != null && jsonData['lugar_fallecimiento'].toString().trim().isNotEmpty) {
+      if (jsonData['lugar_fallecimiento'] != null &&
+          jsonData['lugar_fallecimiento'].toString().trim().isNotEmpty) {
         setParts.add('lugar_fallecimiento = \$${paramIndex}');
         parameters.add(jsonData['lugar_fallecimiento'].toString().trim());
       } else {
@@ -241,7 +270,8 @@ Future<Response> _actualizarPersonaje(Request req, String id) async {
       );
     }
 
-    String query = 'UPDATE personajes SET ${setParts.join(', ')} WHERE id = \$${paramIndex} RETURNING id;';
+    String query =
+        'UPDATE personajes SET ${setParts.join(', ')} WHERE id = \$${paramIndex} RETURNING id;';
     parameters.add(int.tryParse(id) ?? 0);
 
     final resultados = await conexion.query(
@@ -302,65 +332,46 @@ Future<Response> _buscarPersonajes(Request req) async {
     String whereClause = '';
     List<dynamic> parameters = [];
     int paramIndex = 1;
+    String? valorParametro = '';
 
     if (queryParams['nombre'] != null && queryParams['nombre']!.isNotEmpty) {
       whereClause += whereClause.isEmpty ? 'WHERE ' : ' AND ';
-      whereClause += 'LOWER(nombre) LIKE LOWER(\$${paramIndex})';
+      valorParametro = queryParams["nombre"];
+      whereClause += 'LOWER(nombre) LIKE LOWER(\$\$%$valorParametro%\$\$)';
       parameters.add('%${queryParams['nombre']}%');
       paramIndex++;
     }
 
+    print('parametro: $queryParams["lugar_nacimiento"]');
     if (queryParams['lugar_nacimiento'] != null &&
         queryParams['lugar_nacimiento']!.isNotEmpty) {
       whereClause += whereClause.isEmpty ? 'WHERE ' : ' AND ';
-      whereClause += 'LOWER(lugar_nacimiento) LIKE LOWER(\$${paramIndex})';
+      valorParametro = queryParams["lugar_nacimiento"];
+      whereClause +=
+          'LOWER(lugar_nacimiento) LIKE LOWER(\$\$%$valorParametro%\$\$)';
       parameters.add('%${queryParams['lugar_nacimiento']}%');
       paramIndex++;
     }
 
+    print('parametro: $queryParams["lugar_fallecimiento"]');
     if (queryParams['lugar_fallecimiento'] != null &&
         queryParams['lugar_fallecimiento']!.isNotEmpty) {
       whereClause += whereClause.isEmpty ? 'WHERE ' : ' AND ';
-      whereClause += 'LOWER(lugar_fallecimiento) LIKE LOWER(\$${paramIndex})';
+      valorParametro = queryParams["lugar_fallecimiento"];
+      whereClause +=
+          'LOWER(lugar_fallecimiento) LIKE LOWER(\$\$%$valorParametro%\$\$)';
       parameters.add('%${queryParams['lugar_fallecimiento']}%');
       paramIndex++;
     }
 
-    if (queryParams['fecha_nacimiento_desde'] != null) {
-      whereClause += whereClause.isEmpty ? 'WHERE ' : ' AND ';
-      whereClause += 'fecha_nacimiento >= \$${paramIndex}';
-      parameters.add(queryParams['fecha_nacimiento_desde']);
-      paramIndex++;
-    }
-
-    if (queryParams['fecha_nacimiento_hasta'] != null) {
-      whereClause += whereClause.isEmpty ? 'WHERE ' : ' AND ';
-      whereClause += 'fecha_nacimiento <= \$${paramIndex}';
-      parameters.add(queryParams['fecha_nacimiento_hasta']);
-      paramIndex++;
-    }
-
-    if (queryParams['fecha_fallecimiento_desde'] != null) {
-      whereClause += whereClause.isEmpty ? 'WHERE ' : ' AND ';
-      whereClause += 'fecha_fallecimiento >= \$${paramIndex}';
-      parameters.add(queryParams['fecha_fallecimiento_desde']);
-      paramIndex++;
-    }
-
-    if (queryParams['fecha_fallecimiento_hasta'] != null) {
-      whereClause += whereClause.isEmpty ? 'WHERE ' : ' AND ';
-      whereClause += 'fecha_fallecimiento <= \$${paramIndex}';
-      parameters.add(queryParams['fecha_fallecimiento_hasta']);
-      paramIndex++;
-    }
-
+    print('parametro: $queryParams["esta_vivo"]');
     if (queryParams['esta_vivo'] != null) {
       bool estaVivo = queryParams['esta_vivo'] == 'true';
       whereClause += whereClause.isEmpty ? 'WHERE ' : ' AND ';
       if (estaVivo) {
         whereClause += 'fecha_fallecimiento IS NULL';
       } else {
-        //whereClause += 'fecha_fallecimiento IS NOT NULL';
+        whereClause += '1 = 1';
       }
     }
 
@@ -368,13 +379,23 @@ Future<Response> _buscarPersonajes(Request req) async {
         'SELECT id, nombre, fecha_nacimiento, lugar_nacimiento, '
         'fecha_fallecimiento, lugar_fallecimiento FROM personajes $whereClause;';
 
-    // En v2.x, se usa .query()
+    print('query: $query');
+    //print('parameters: $parameters');
+
+    // Crear el mapa de sustitución para los parámetros
+    /* Map<String, dynamic> substitutionValues = {};
+    for (int i = 0; i < parameters.length; i++) {
+      substitutionValues['${i + 1}'] = parameters[i];
+    }
+
+    print('substitutionValues: $substitutionValues');
+
     final resultados = await conexion.query(
       query,
-      substitutionValues: {
-        for (int i = 0; i < parameters.length; i++) '${i + 1}': parameters[i],
-      },
-    );
+      substitutionValues: substitutionValues,
+    ); */
+
+    final resultados = await conexion.query(query);
 
     final lista = resultados.map((fila) {
       // En v2.x, los valores se acceden por índice: fila[0], fila[1], etc.

@@ -118,10 +118,8 @@ class DatabaseService {
     String? nombre,
     String? lugarNacimiento,
     String? lugarFallecimiento,
-    DateTime? fechaNacimientoDesde,
-    DateTime? fechaNacimientoHasta,
-    DateTime? fechaFallecimientoDesde,
-    DateTime? fechaFallecimientoHasta,
+    DateTime? fechaNacimiento,
+    DateTime? fechaFallecimiento,
     bool? estaVivo,
   }) async {
     try {
@@ -137,26 +135,16 @@ class DatabaseService {
       if (lugarFallecimiento != null && lugarFallecimiento.isNotEmpty) {
         queryParams['lugar_fallecimiento'] = lugarFallecimiento;
       }
-      if (fechaNacimientoDesde != null) {
-        queryParams['fecha_nacimiento_desde'] = fechaNacimientoDesde
+      if (fechaNacimiento != null) {
+        queryParams['fecha_nacimiento'] = fechaNacimiento
             .toIso8601String()
             .split('T')[0];
       }
-      if (fechaNacimientoHasta != null) {
-        queryParams['fecha_nacimiento_hasta'] = fechaNacimientoHasta
+      if (fechaFallecimiento != null) {
+        queryParams['fecha_fallecimiento'] = fechaFallecimiento
             .toIso8601String()
             .split('T')[0];
-      }
-      if (fechaFallecimientoDesde != null) {
-        queryParams['fecha_fallecimiento_desde'] = fechaFallecimientoDesde
-            .toIso8601String()
-            .split('T')[0];
-      }
-      if (fechaFallecimientoHasta != null) {
-        queryParams['fecha_fallecimiento_hasta'] = fechaFallecimientoHasta
-            .toIso8601String()
-            .split('T')[0];
-      }
+      }      
       if (estaVivo != null) {
         queryParams['esta_vivo'] = estaVivo.toString();
       }

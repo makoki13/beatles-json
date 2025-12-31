@@ -58,10 +58,8 @@ class PersonajesRepository {
     String? nombre,
     String? lugarNacimiento,
     String? lugarFallecimiento,
-    DateTime? fechaNacimientoDesde,
-    DateTime? fechaNacimientoHasta,
-    DateTime? fechaFallecimientoDesde,
-    DateTime? fechaFallecimientoHasta,
+    DateTime? fechaNacimiento,
+    DateTime? fechaFallecimiento,
     bool? estaVivo,
   }) async {
     try {
@@ -69,10 +67,8 @@ class PersonajesRepository {
         nombre: nombre,
         lugarNacimiento: lugarNacimiento,
         lugarFallecimiento: lugarFallecimiento,
-        fechaNacimientoDesde: fechaNacimientoDesde,
-        fechaNacimientoHasta: fechaNacimientoHasta,
-        fechaFallecimientoDesde: fechaFallecimientoDesde,
-        fechaFallecimientoHasta: fechaFallecimientoHasta,
+        fechaNacimiento: fechaNacimiento,
+        fechaFallecimiento: fechaFallecimiento,
         estaVivo: estaVivo,
       );
       return data.map((json) => Personaje.fromJson(json)).toList();
